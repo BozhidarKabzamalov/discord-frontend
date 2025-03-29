@@ -1,0 +1,10 @@
+{
+	"translation": {
+        "common": {
+            "continue": "Continue"
+        },
+        "login": {
+            "needAnAccount": "Need an account?"
+        }
+	}
+}
