@@ -10,7 +10,9 @@ export const registerUser = async (payload) => {
 
 export const loginUser = async (payload) => {
     try {
-        await axiosInstance.post("/login", payload);
+        const { data } = await axiosInstance.post("/login", payload);
+        
+        return data.user;
     } catch (error) {
         console.log(error);
     }

@@ -4,7 +4,8 @@
             "continue": "Continue"
         },
         "login": {
-            "needAnAccount": "Need an account?"
+            "needAnAccount": "Need an account?",
+            "welcomeBack": "Welcome Back!"
         }
 	}
 }
