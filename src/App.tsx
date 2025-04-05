@@ -1,38 +1,42 @@
 import { Routes, Route, useNavigate } from "react-router";
 
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import Login from "./views/Login";
 import Register from "./views/Register";
 import ProtectedRoutes from "./ProtectedRoutes";
 import Home from "./views/Home";
 import axiosInstance from "./axiosInstance";
+import { useAppDispatch, useAppSelector } from "./hooks/hooks";
+import { setAuthenticatedUser } from "./store/slices/authSlice";
 
 const App = () => {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-	const isAuthenticated = useSelector(
-		(state) => state.mainSlice.isAuthenticated
+	const authenticatedUser = useAppSelector(
+		(state) => state.auth.authenticatedUser
 	);
 
 	useEffect(() => {
-		const persistedUserId = localStorage.getItem("userId");
+		const persistedAuthenticatedUser =
+			localStorage.getItem("authenticatedUser");
 
-		if (!persistedUserId || isAuthenticated) return;
+		if (!persistedAuthenticatedUser || authenticatedUser) return;
 
-		axiosInstance.defaults.headers.common["User-Id"] = persistedUserId;
-		dispatch(setIsAuthenticated(true));
-		dispatch(setAuthenticatedUserId(persistedUserId));
+		const parsedPersistedAuthenticatedUser = JSON.parse(
+			persistedAuthenticatedUser
+		);
+
+		axiosInstance.defaults.headers.common.Authorization = `Bearer ${parsedPersistedAuthenticatedUser.id}`;
+		dispatch(setAuthenticatedUser(parsedPersistedAuthenticatedUser));
 		navigate("/");
-	}, [dispatch, isAuthenticated, navigate]);
+	}, [authenticatedUser, dispatch, navigate]);
 
 	return (
 		<Routes>
 			<Route path='/login' element={<Login />} />
 			<Route path='/register' element={<Register />} />
 			<Route element={<ProtectedRoutes />}>
-				<Route path='/' element={<Home />}>
-				</Route>
+				<Route path='/' element={<Home />}></Route>
 			</Route>
 		</Routes>
 	);
