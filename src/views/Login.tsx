@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Input from "../components/Input";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../context/useAuth";
 
 const Login = () => {
 	const { t } = useTranslation();
