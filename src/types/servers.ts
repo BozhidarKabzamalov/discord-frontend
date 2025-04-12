@@ -1,6 +1,6 @@
 enum ChannelType {
-    Text = 'TEXT',
-    Voice = 'VOICE',
+	Text = "TEXT",
+	Voice = "VOICE",
 }
 
 export type Channel = {
@@ -13,9 +13,9 @@ export type Channel = {
 };
 
 export type Server = {
-    id: number;
-    name: string;
-    channels: Channel[];
-    createdAt: string;
-    updatedAt: string;
-}
+	id: number;
+	name: string;
+	channels: Channel[];
+	createdAt: string;
+	updatedAt: string;
+};

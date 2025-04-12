@@ -3,12 +3,14 @@ import { useGetUserServers } from "../services/serverService";
 import SidebarServerItem from "./SidebarServerItem";
 
 const Sidebar = () => {
-    const { data: servers } = useGetUserServers();
+	const { data: servers } = useGetUserServers();
 
 	return (
 		<StyledSidebar>
 			{servers &&
-				servers.map((server) => <SidebarServerItem key={server.id} server={server} />)}
+				servers.map((server) => (
+					<SidebarServerItem key={server.id} server={server} />
+				))}
 		</StyledSidebar>
 	);
 };

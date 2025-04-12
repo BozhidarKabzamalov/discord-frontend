@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { loginUser } from "../services/userService";
-import { LoginPayload } from "../types/auth";
+import { AuthenticatedUser, LoginPayload } from "../types/auth";
 import { AuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export const AuthProvider = ({ children }) => {
 	const navigate = useNavigate();
-	const [authenticatedUser, setAuthenticatedUser] = useState<any>(null);
+	const [authenticatedUser, setAuthenticatedUser] =
+		useState<AuthenticatedUser | null>(null);
 
 	const register = () => {};
 
@@ -32,10 +33,14 @@ export const AuthProvider = ({ children }) => {
 				localStorage.getItem("authenticatedUser");
 
 			if (!persistedAuthenticatedUser) return;
-                
-            setAuthenticatedUser(persistedAuthenticatedUser);
-            axiosInstance.defaults.headers.common.Authorization = `Bearer ${persistedAuthenticatedUser.token}`;
-            navigate("/");
+
+			const parsedPersistedAuthenticatedUser = JSON.parse(
+				persistedAuthenticatedUser
+			);
+
+			setAuthenticatedUser(parsedPersistedAuthenticatedUser);
+			axiosInstance.defaults.headers.common.Authorization = `Bearer ${parsedPersistedAuthenticatedUser.token}`;
+			navigate("/");
 		};
 
 		initializeAuth();

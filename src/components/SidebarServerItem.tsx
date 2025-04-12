@@ -9,7 +9,7 @@ type Props = {
 
 const SidebarItem: FunctionComponent<Props> = ({ server }) => {
 	return (
-		<Link to="/channels/2/3">
+		<Link to='/channels/2/3'>
 			<StyledSidebarItem>{server.name.charAt(0)}</StyledSidebarItem>
 		</Link>
 	);

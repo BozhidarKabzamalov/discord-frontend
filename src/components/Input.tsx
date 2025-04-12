@@ -12,7 +12,7 @@ interface InputProps {
 	onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 	error?: string;
 	autoComplete?: string;
-    required?: boolean;
+	required?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -26,7 +26,7 @@ const Input: React.FC<InputProps> = ({
 	onBlur,
 	error,
 	autoComplete,
-    required = false,
+	required = false,
 }) => {
 	return (
 		<InputContainer>
@@ -80,6 +80,6 @@ const StyledInput = styled.input`
 	}
 `;
 
-const Error = styled.div``
+const Error = styled.div``;
 
 export default Input;
