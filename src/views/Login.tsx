@@ -13,11 +13,11 @@ const Login = () => {
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const { login } = useAuth();
 
-	const onChange = (e) => {
+	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 	};
 
-	const onSubmit = async (e) => {
+	const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await login(formData);
 		navigate("/");
@@ -25,7 +25,7 @@ const Login = () => {
 
 	return (
 		<Container>
-			<Form onSubmit={onSubmit}>
+			<Form onSubmit={onSubmitHandler}>
 				<Title>{t("login.welcomeBack")}</Title>
 				<Input
 					label='Email'
@@ -33,7 +33,7 @@ const Login = () => {
 					name='email'
 					type='text'
 					value={formData.email}
-					onChange={onChange}
+					onChange={onChangeHandler}
 					required
 				/>
 				<Input
@@ -42,7 +42,7 @@ const Login = () => {
 					name='password'
 					type='password'
 					value={formData.password}
-					onChange={onChange}
+					onChange={onChangeHandler}
 					required
 				/>
 				<RegisterButton type='submit'>

@@ -3,22 +3,24 @@ import styled from "styled-components";
 import registerLoginBackground from "../assets/registerLoginBackground.jpg";
 import { registerUser } from "../services/userService";
 import { useNavigate } from "react-router-dom";
+import { RegisterPayload } from "../types/auth";
 
 const Register = () => {
 	const navigate = useNavigate();
-	const [formData, setFormData] = useState({
+	const [formData, setFormData] = useState<RegisterPayload>({
 		username: "",
+        email: "",
 		password: "",
 	});
 
-	const handleChange = (e) => {
+	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData({
 			...formData,
 			[e.target.name]: e.target.value,
 		});
 	};
 
-	const handleSubmit = async (e) => {
+	const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		await registerUser(formData);
 		navigate("/login");
@@ -28,7 +30,7 @@ const Register = () => {
 		<Container>
 			<FormContainer>
 				<Title>Create an account</Title>
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={onSubmitHandler}>
 					<InputContainer>
 						<Label htmlFor='username'>Username</Label>
 						<Input
@@ -36,7 +38,7 @@ const Register = () => {
 							id='username'
 							name='username'
 							value={formData.username}
-							onChange={handleChange}
+							onChange={onChangeHandler}
 							required
 						/>
 					</InputContainer>
@@ -47,7 +49,7 @@ const Register = () => {
 							id='password'
 							name='password'
 							value={formData.password}
-							onChange={handleChange}
+							onChange={onChangeHandler}
 							required
 						/>
 					</InputContainer>

@@ -5,7 +5,11 @@ import { AuthenticatedUser, LoginPayload } from "../types/auth";
 import { AuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
-export const AuthProvider = ({ children }) => {
+type AuthProviderProps = {
+	children: React.ReactNode;
+};
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
 	const navigate = useNavigate();
 	const [authenticatedUser, setAuthenticatedUser] =
 		useState<AuthenticatedUser | null>(null);
