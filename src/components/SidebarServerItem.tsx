@@ -8,10 +8,13 @@ type Props = {
 };
 
 const SidebarItem: FunctionComponent<Props> = ({ server }) => {
+    const { id, name, channels } = server;
+    const url = `/channels/${id}/${channels[0].id}`;
+
 	return (
-		<Link to='/channels/2/3'>
-			<StyledSidebarItem>{server.name.charAt(0)}</StyledSidebarItem>
-		</Link>
+		<StyledLink to={url}>
+			<StyledSidebarItem>{name.charAt(0)}</StyledSidebarItem>
+		</StyledLink>
 	);
 };
 
@@ -25,5 +28,11 @@ const StyledSidebarItem = styled.div`
 	background-color: #3d3d45;
 	color: #dfdfe2;
 `;
+
+const StyledLink = styled(Link)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`
 
 export default SidebarItem;

@@ -4,7 +4,7 @@ import Login from "./views/Login";
 import Register from "./views/Register";
 import ProtectedRoutes from "./ProtectedRoutes";
 import Dashboard from "./views/Dashboard";
-import Server from "./components/Server";
+import Server from "./views/Server";
 
 const App = () => {
 	return (
@@ -15,7 +15,7 @@ const App = () => {
 				<Route path='/' element={<Dashboard />}>
 					<Route path='/channels/@me' element={<Register />} />
 					<Route
-						path='/channels/:serverId/:serverChannelId'
+						path='/channels/:serverId/:channelId'
 						element={<Server />}
 					/>
 				</Route>

@@ -3,7 +3,7 @@ import axiosInstance from "../axiosInstance";
 import { loginUser } from "../services/userService";
 import { AuthenticatedUser, LoginPayload } from "../types/auth";
 import { AuthContext } from "./AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 type AuthProviderProps = {
 	children: React.ReactNode;
@@ -17,14 +17,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 	const register = () => {};
 
 	const login = async (payload: LoginPayload) => {
-		const authenticatedUser = await loginUser(payload);
-		setAuthenticatedUser(authenticatedUser);
+		try {
+			const authenticatedUser = await loginUser(payload);
+			setAuthenticatedUser(authenticatedUser);
 
-		axiosInstance.defaults.headers.common.Authorization = `Bearer ${authenticatedUser.token}`;
-		localStorage.setItem(
-			"authenticatedUser",
-			JSON.stringify(authenticatedUser)
-		);
+			axiosInstance.defaults.headers.common.Authorization = `Bearer ${authenticatedUser.token}`;
+			localStorage.setItem(
+				"authenticatedUser",
+				JSON.stringify(authenticatedUser)
+			);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const logout = () => {
@@ -36,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 			const persistedAuthenticatedUser =
 				localStorage.getItem("authenticatedUser");
 
-			if (!persistedAuthenticatedUser) return;
+			if (!persistedAuthenticatedUser || authenticatedUser) return;
 
 			const parsedPersistedAuthenticatedUser = JSON.parse(
 				persistedAuthenticatedUser
@@ -48,7 +52,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 		};
 
 		initializeAuth();
-	}, [navigate]);
+	}, [authenticatedUser, navigate]);
 
 	const value = {
 		authenticatedUser,

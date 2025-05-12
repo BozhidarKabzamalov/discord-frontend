@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
 import { Server } from "../types/servers";
 
-export const getUserServers = async () => {
+export const getServers = async () => {
 	try {
 		const { data } = await axiosInstance.get<{ servers: Server[] }>(
 			"/servers"
@@ -14,10 +14,10 @@ export const getUserServers = async () => {
 	}
 };
 
-export const useGetUserServers = () => {
+export const useGetServers = () => {
 	return useQuery({
-		queryKey: ["userServers"],
-		queryFn: () => getUserServers(),
+		queryKey: ["servers"],
+		queryFn: () => getServers(),
 	});
 };
 

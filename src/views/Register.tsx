@@ -2,7 +2,7 @@ import { useState } from "react";
 import styled from "styled-components";
 import registerLoginBackground from "../assets/registerLoginBackground.jpg";
 import { registerUser } from "../services/userService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { RegisterPayload } from "../types/auth";
 
 const Register = () => {
