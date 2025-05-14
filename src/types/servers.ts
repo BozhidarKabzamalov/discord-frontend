@@ -1,6 +1,6 @@
 export enum ChannelType {
-	Text = "TEXT",
-	Voice = "VOICE",
+	TEXT = "text",
+	VOICE = "voice",
 }
 
 export type Channel = {

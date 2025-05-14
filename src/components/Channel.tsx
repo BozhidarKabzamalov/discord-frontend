@@ -1,27 +1,45 @@
 import styled from "styled-components";
-import { Channel as ChannelType } from "../types/servers";
+import {
+	ChannelType as ChannelTypeEnum,
+	Channel as ChannelType,
+} from "../types/servers";
+import { FaHashtag, FaVolumeDown } from "react-icons/fa";
+import theme from "../theme.js";
 
 type ChannelProps = {
 	channel: ChannelType;
 };
 
 const Channel = ({ channel }: ChannelProps) => {
-	const { name } = channel;
+	const { name, type } = channel;
+	const isTextType = type === ChannelTypeEnum.TEXT;
 
 	return (
 		<Container>
+			{isTextType ? (
+				<FaHashtag size='18' color={theme.colors.gray200} />
+			) : (
+				<FaVolumeDown size='18' color={theme.colors.gray200} />
+			)}
 			<ChannelName>{name}</ChannelName>
 		</Container>
 	);
 };
 
 const Container = styled.div`
-    margin-bottom: 15px;
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+
+    &:last-child {
+        margin-bottom: 0px;
+    }
 `;
 
 const ChannelName = styled.p`
 	color: ${({ theme }) => theme.colors.gray200};
-    font-weight: 500;
+	margin-left: 15px;
+	font-weight: 700;
 `;
 
 export default Channel;

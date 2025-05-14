@@ -1,20 +1,18 @@
-import { useEffect, useState } from "react";
-import axiosInstance from "../axiosInstance";
-import { loginUser } from "../services/userService";
-import { AuthenticatedUser, LoginPayload } from "../types/auth";
-import { AuthContext } from "./AuthContext";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import { LoginPayload } from "../types/auth";
+import { loginUser } from "../services/userService";
+import axiosInstance from "../axiosInstance";
+import useAuthStore from "../stores/authStore";
 
-type AuthProviderProps = {
-	children: React.ReactNode;
-};
-
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-	const navigate = useNavigate();
-	const [authenticatedUser, setAuthenticatedUser] =
-		useState<AuthenticatedUser | null>(null);
-
-	const register = () => {};
+const useAuth = () => {
+    const navigate = useNavigate();
+    const authenticatedUser = useAuthStore((state) => state.authenticatedUser);
+    const setAuthenticatedUser = useAuthStore(
+		(state) => state.setAuthenticatedUser
+	);
+    
+    const register = () => {};
 
 	const login = async (payload: LoginPayload) => {
 		try {
@@ -52,16 +50,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 		};
 
 		initializeAuth();
-	}, [authenticatedUser, navigate]);
+	}, [authenticatedUser, navigate, setAuthenticatedUser]);
 
-	const value = {
-		authenticatedUser,
-		register,
-		login,
-		logout,
-	};
+    return { register, login, logout }
+}
 
-	return (
-		<AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-	);
-};
+export default useAuth;
