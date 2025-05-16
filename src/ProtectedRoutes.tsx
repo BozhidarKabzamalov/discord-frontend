@@ -1,8 +1,8 @@
 import { Outlet, Navigate } from "react-router";
-import useAuthStore from "./stores/authStore";
+import { useBoundStore } from "./stores/useBoundStore";
 
 const ProtectedRoutes = () => {
-    const authenticatedUser = useAuthStore((state) => state.authenticatedUser);
+    const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
 
 	return authenticatedUser ? <Outlet /> : <Navigate to='/login' />;
 };

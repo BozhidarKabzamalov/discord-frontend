@@ -3,12 +3,12 @@ import { useNavigate } from "react-router";
 import { LoginPayload } from "../types/auth";
 import { loginUser } from "../services/userService";
 import axiosInstance from "../axiosInstance";
-import useAuthStore from "../stores/authStore";
+import { useBoundStore } from "../stores/useBoundStore";
 
 const useAuth = () => {
     const navigate = useNavigate();
-    const authenticatedUser = useAuthStore((state) => state.authenticatedUser);
-    const setAuthenticatedUser = useAuthStore(
+    const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
+    const setAuthenticatedUser = useBoundStore(
 		(state) => state.setAuthenticatedUser
 	);
     
