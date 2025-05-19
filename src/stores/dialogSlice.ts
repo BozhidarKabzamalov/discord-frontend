@@ -2,9 +2,12 @@ import { StateCreator } from "zustand";
 import { DialogSliceType } from "../types/store";
 
 const createDialogSlice: StateCreator<DialogSliceType> = (set) => ({
-	shouldShowCreateServerDialog: false,
-	setShouldShowCreateServerDialog: (payload) =>
-		set(() => ({ shouldShowCreateServerDialog: payload })),
+	showCreateServerDialog: false,
+	setShowCreateServerDialog: (payload) =>
+		set(() => ({ showCreateServerDialog: payload })),
+	showCreateServerChannelDialog: false,
+	setShowCreateServerChannelDialog: (payload) =>
+		set(() => ({ showCreateServerChannelDialog: payload })),
 });
 
 export default createDialogSlice;

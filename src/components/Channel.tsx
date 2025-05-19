@@ -4,7 +4,7 @@ import {
 	Channel as ChannelType,
 } from "../types/servers";
 import { FaHashtag, FaVolumeDown } from "react-icons/fa";
-import theme from "../theme.js";
+import theme from "../theme.ts";
 
 type ChannelProps = {
 	channel: ChannelType;

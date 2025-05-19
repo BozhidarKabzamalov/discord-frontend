@@ -5,8 +5,20 @@ import Register from "./views/Register";
 import ProtectedRoutes from "./ProtectedRoutes";
 import Dashboard from "./views/Dashboard";
 import Server from "./views/Server";
+import useAuth from "./hooks/useAuth";
+import { useEffect } from "react";
+import { useBoundStore } from "./stores/useBoundStore";
 
 const App = () => {
+    const { initializeAuth } = useAuth();
+    const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
+
+    useEffect(() => {
+        if (authenticatedUser) return;
+
+        initializeAuth();
+    }, [authenticatedUser, initializeAuth])
+    
 	return (
 		<Routes>
 			<Route path='/login' element={<Login />} />

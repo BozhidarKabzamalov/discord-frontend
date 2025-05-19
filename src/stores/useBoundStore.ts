@@ -5,5 +5,5 @@ import { StoreType } from "../types/store";
 
 export const useBoundStore = create<StoreType>()((...a) => ({
 	...createAuthSlice(...a),
-	...createDialogSlice(...a),
+    ...createDialogSlice(...a),
 }));

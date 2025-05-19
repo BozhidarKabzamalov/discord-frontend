@@ -12,6 +12,10 @@ const GlobalStyle = createGlobalStyle`
     body {
         font-family: 'Roboto', 'Helvetica', 'Helvetica Neue', 'Arial', sans-serif;
     }
+    button {
+        border-style: solid;
+        border: 0;
+    }
 `;
 
 export default GlobalStyle;

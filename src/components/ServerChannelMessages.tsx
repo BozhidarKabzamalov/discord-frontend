@@ -1,5 +1,4 @@
-import { useParams } from "react-router";
-import { useGetChannelMessages } from "../services/messagesService";
+import { useGetChannelMessages } from "../services/messageService";
 import styled from "styled-components";
 import ChannelMessageInput from "./ChannelMessageInput";
 import { Channel } from "../types/servers";
@@ -10,12 +9,9 @@ type MemberProps = {
 };
 
 const ServerChannelMessages = ({ channel }: MemberProps) => {
-	const { channelId } = useParams();
-	const { data: channelMessages } = useGetChannelMessages(channelId);
+	const { data: channelMessages } = useGetChannelMessages(channel.id);
 
-	if (!channelMessages) return;
-
-	const channelMessagesJsx = channelMessages.map((channelMessage) => (
+	const channelMessagesJsx = channelMessages?.map((channelMessage) => (
 		<Message key={channelMessage.id} message={channelMessage} />
 	));
 

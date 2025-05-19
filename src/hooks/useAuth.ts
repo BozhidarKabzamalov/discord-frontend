@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { LoginPayload } from "../types/auth";
 import { loginUser } from "../services/userService";
@@ -33,26 +32,22 @@ const useAuth = () => {
 		localStorage.removeItem("authenticatedUser");
 	};
 
-	useEffect(() => {
-		const initializeAuth = async () => {
-			const persistedAuthenticatedUser =
-				localStorage.getItem("authenticatedUser");
+    const initializeAuth = async () => {
+        const persistedAuthenticatedUser =
+            localStorage.getItem("authenticatedUser");
 
-			if (!persistedAuthenticatedUser || authenticatedUser) return;
+        if (!persistedAuthenticatedUser || authenticatedUser) return;
 
-			const parsedPersistedAuthenticatedUser = JSON.parse(
-				persistedAuthenticatedUser
-			);
+        const parsedPersistedAuthenticatedUser = JSON.parse(
+            persistedAuthenticatedUser
+        );
 
-			setAuthenticatedUser(parsedPersistedAuthenticatedUser);
-			axiosInstance.defaults.headers.common.Authorization = `Bearer ${parsedPersistedAuthenticatedUser.token}`;
-			navigate("/");
-		};
+        setAuthenticatedUser(parsedPersistedAuthenticatedUser);
+        axiosInstance.defaults.headers.common.Authorization = `Bearer ${parsedPersistedAuthenticatedUser.token}`;
+        navigate("/");
+    };
 
-		initializeAuth();
-	}, [authenticatedUser, navigate, setAuthenticatedUser]);
-
-    return { register, login, logout }
+    return { register, login, logout, initializeAuth };
 }
 
 export default useAuth;

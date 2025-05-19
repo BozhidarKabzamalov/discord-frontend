@@ -30,9 +30,10 @@ const StyledSidebarItem = styled.div`
 `;
 
 const StyledLink = styled(Link)`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 15px;
+`;
 
 export default SidebarItem;

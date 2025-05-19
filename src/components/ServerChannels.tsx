@@ -2,13 +2,19 @@ import styled from "styled-components";
 import { ChannelType, Server } from "../types/servers";
 import Channel from "./Channel";
 import { FaPlus } from "react-icons/fa";
-import theme from "../theme";
+import theme from "../theme.ts";
+import CreateServerChannelDialog from "./dialogs/CreateServerChannelDialog.tsx";
+import { useBoundStore } from "../stores/useBoundStore.ts";
 
 type MemberProps = {
 	server: Server;
 };
 
 const ServerMembers = ({ server }: MemberProps) => {
+    const setShowCreateServerChannelDialog = useBoundStore(
+		(state) => state.setShowCreateServerChannelDialog
+	);
+        
 	const channelTypeGroups = [
 		{
 			type: ChannelType.TEXT,
@@ -34,7 +40,13 @@ const ServerMembers = ({ server }: MemberProps) => {
 						<ChannelTypeTitle key={`title-${group.type}`}>
 							{group.title}
 						</ChannelTypeTitle>
-						<FaPlus size='14' color={theme.colors.gray200} />
+						<FaPlus
+							size='14'
+							color={theme.colors.gray200}
+							onClick={() =>
+								setShowCreateServerChannelDialog(true)
+							}
+						/>
 					</ChannelTypeTitleContainer>
 					{group.channels.map((channel) => (
 						<Channel key={channel.id} channel={channel} />
@@ -48,6 +60,7 @@ const ServerMembers = ({ server }: MemberProps) => {
 		<Container>
 			<ServerName>{server.name}</ServerName>
 			{serverChannelsJsx}
+            <CreateServerChannelDialog />
 		</Container>
 	);
 };

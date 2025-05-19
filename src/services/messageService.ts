@@ -11,12 +11,13 @@ export const getChannelMessages = async (channelId: number) => {
 		return data.messages;
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
 export const useGetChannelMessages = (channelId: number) => {
 	return useQuery({
-		queryKey: ["channelMessages"],
+		queryKey: ["channelMessages", channelId],
 		queryFn: () => getChannelMessages(channelId),
 	});
 };
@@ -31,5 +32,6 @@ export const createChannelMessage = async (channelId: number, content: number) =
 		return data.message;
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };

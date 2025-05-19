@@ -11,6 +11,7 @@ export const getServers = async () => {
 		return data.servers;
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
@@ -30,6 +31,7 @@ export const createServer = async (serverName: string) => {
 		return data.data;
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
@@ -38,6 +40,7 @@ export const deleteServer = async (serverId: number) => {
 		await axiosInstance.delete(`/servers/${serverId}`);
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
@@ -46,6 +49,7 @@ export const editServer = async (serverId: number, payload: unknown) => {
 		await axiosInstance.put(`/servers/${serverId}`, payload);
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
@@ -56,6 +60,7 @@ export const addUserToServer = async (serverId: number, userId: number) => {
 		);
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
@@ -69,6 +74,7 @@ export const removeUserFromServer = async (
 		);
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
@@ -81,6 +87,7 @@ export const getAllServerMembers = async (serverId: number) => {
 		return data.data;
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
 
@@ -94,5 +101,6 @@ export const promoteUserToAdmin = async (
 		);
 	} catch (error) {
 		console.log(error);
+        throw error;
 	}
 };
