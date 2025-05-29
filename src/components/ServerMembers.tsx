@@ -21,6 +21,7 @@ const ServerMembers = ({ members }: MemberProps) => {
 
 const Container = styled.div`
 	width: 265px;
+	background-color: ${({ theme }) => theme.colors.gray1100};
 	border-left: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
 `;
 

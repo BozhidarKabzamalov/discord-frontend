@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
 import { Server } from "../types/servers";
 
@@ -11,7 +11,7 @@ export const getServers = async () => {
 		return data.servers;
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };
 
@@ -24,15 +24,54 @@ export const useGetServers = () => {
 
 export const createServer = async (serverName: string) => {
 	try {
-		const { data } = await axiosInstance.post("/servers", {
+		return await axiosInstance.post("/servers", {
 			name: serverName,
 		});
-
-		return data.data;
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
+};
+
+export const useCreateServer = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (serverName: string) => createServer(serverName),
+		onSuccess: (response) => {
+			const newServer = response.data.server;
+
+			queryClient.setQueryData<Server[]>(
+				["servers"],
+				(oldServers = []) => [...oldServers, newServer]
+			);
+		},
+	});
+};
+
+export const joinServer = async (inviteCode: string) => {
+	try {
+		return await axiosInstance.post(`/servers/join/${inviteCode}`);
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+};
+
+export const useJoinServer = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (invideCode: string) => joinServer(invideCode),
+		onSuccess: (response) => {
+			const newServer = response.data.server;
+
+			queryClient.setQueryData<Server[]>(
+				["servers"],
+				(oldServers = []) => [...oldServers, newServer]
+			);
+		},
+	});
 };
 
 export const deleteServer = async (serverId: number) => {
@@ -40,7 +79,7 @@ export const deleteServer = async (serverId: number) => {
 		await axiosInstance.delete(`/servers/${serverId}`);
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };
 
@@ -49,7 +88,7 @@ export const editServer = async (serverId: number, payload: unknown) => {
 		await axiosInstance.put(`/servers/${serverId}`, payload);
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };
 
@@ -60,7 +99,7 @@ export const addUserToServer = async (serverId: number, userId: number) => {
 		);
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };
 
@@ -74,7 +113,7 @@ export const removeUserFromServer = async (
 		);
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };
 
@@ -87,7 +126,7 @@ export const getAllServerMembers = async (serverId: number) => {
 		return data.data;
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };
 
@@ -101,6 +140,6 @@ export const promoteUserToAdmin = async (
 		);
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };

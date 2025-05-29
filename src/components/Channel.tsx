@@ -5,17 +5,24 @@ import {
 } from "../types/servers";
 import { FaHashtag, FaVolumeDown } from "react-icons/fa";
 import theme from "../theme.ts";
+import { useNavigate, useParams } from "react-router";
 
 type ChannelProps = {
 	channel: ChannelType;
 };
 
 const Channel = ({ channel }: ChannelProps) => {
-	const { name, type } = channel;
+    const navigate = useNavigate();
+    const { serverId } = useParams<{ serverId: string; channelId: string }>();
+	const { id, name, type } = channel;
 	const isTextType = type === ChannelTypeEnum.TEXT;
 
+    const handleChannelClick = () => {
+		navigate(`/channels/${serverId}/${id}`);
+	};
+
 	return (
-		<Container>
+		<Container onClick={handleChannelClick}>
 			{isTextType ? (
 				<FaHashtag size='18' color={theme.colors.gray200} />
 			) : (

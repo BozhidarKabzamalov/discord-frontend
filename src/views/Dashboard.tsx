@@ -23,9 +23,9 @@ const Main = styled.div`
 	display: flex;
 	flex-direction: row;
 	flex: 1;
-	background-color: #323338;
 	min-height: 100vh;
 	max-height: 100vh;
+	background-color: ${({ theme }) => theme.colors.gray1100};
 `;
 
 export default Dashboard;

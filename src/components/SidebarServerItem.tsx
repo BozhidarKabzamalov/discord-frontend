@@ -24,9 +24,14 @@ const StyledSidebarItem = styled.div`
 	justify-content: center;
 	width: 40px;
 	height: 40px;
-	border-radius: 50%;
-	background-color: #3d3d45;
-	color: #dfdfe2;
+	border-radius: 10px;
+	color: ${({ theme }) => theme.colors.gray100};
+	background-color: ${({ theme }) => theme.colors.gray1000};
+
+	&:hover {
+		color: ${({ theme }) => theme.colors.white};
+		background-color: ${({ theme }) => theme.colors.blue200};
+	}
 `;
 
 const StyledLink = styled(Link)`

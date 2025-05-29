@@ -30,6 +30,7 @@ const useAuth = () => {
 
 	const logout = () => {
 		localStorage.removeItem("authenticatedUser");
+        setAuthenticatedUser(null);
 	};
 
     const initializeAuth = async () => {

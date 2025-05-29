@@ -61,7 +61,7 @@ const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	flex: 1;
-	background-color: #323338;
+	background-color: ${({ theme }) => theme.colors.gray800};
 	min-height: 100vh;
 	max-height: 100vh;
 	background-image: url(${registerLoginBackground});

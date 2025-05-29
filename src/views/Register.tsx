@@ -4,6 +4,7 @@ import registerLoginBackground from "../assets/registerLoginBackground.jpg";
 import { registerUser } from "../services/userService";
 import { useNavigate } from "react-router";
 import { RegisterPayload } from "../types/auth";
+import Input from "../components/Input";
 
 const Register = () => {
 	const navigate = useNavigate();
@@ -28,37 +29,40 @@ const Register = () => {
 
 	return (
 		<Container>
-			<FormContainer>
+			<Form onSubmit={onSubmitHandler}>
 				<Title>Create an account</Title>
-				<form onSubmit={onSubmitHandler}>
-					<InputContainer>
-						<Label htmlFor='username'>Username</Label>
-						<Input
-							type='text'
-							id='username'
-							name='username'
-							value={formData.username}
-							onChange={onChangeHandler}
-							required
-						/>
-					</InputContainer>
-					<InputContainer>
-						<Label htmlFor='password'>Password</Label>
-						<Input
-							type='password'
-							id='password'
-							name='password'
-							value={formData.password}
-							onChange={onChangeHandler}
-							required
-						/>
-					</InputContainer>
-					<RegisterButton>Continue</RegisterButton>
-				</form>
+				<Input
+					label='Username'
+					id='username'
+					name='username'
+					type='text'
+					value={formData.username}
+					onChange={onChangeHandler}
+					required
+				/>
+				<Input
+					label='Email'
+					id='email'
+					name='email'
+					type='text'
+					value={formData.email}
+					onChange={onChangeHandler}
+					required
+				/>
+				<Input
+					label='Password'
+					id='password'
+					name='password'
+					type='password'
+					value={formData.email}
+					onChange={onChangeHandler}
+					required
+				/>
+				<RegisterButton>Continue</RegisterButton>
 				<RedirectToLogin onClick={() => navigate("/login")}>
 					Already have an account?
 				</RedirectToLogin>
-			</FormContainer>
+			</Form>
 		</Container>
 	);
 };
@@ -68,7 +72,7 @@ const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	flex: 1;
-	background-color: #323338;
+	background-color: ${({ theme }) => theme.colors.gray800};
 	min-height: 100vh;
 	max-height: 100vh;
 	background-image: url(${registerLoginBackground});
@@ -76,7 +80,7 @@ const Container = styled.div`
 	background-position: center center;
 `;
 
-const FormContainer = styled.div`
+const Form = styled.form`
 	background-color: #36393f;
 	padding: 40px;
 	width: 500px;
@@ -91,33 +95,6 @@ const Title = styled.h2`
 	font-size: 24px;
 	line-height: 30px;
 	margin-bottom: 20px;
-`;
-
-const Label = styled.label`
-	color: #8e9297;
-	margin-bottom: 10px;
-	font-size: 12px;
-	line-height: 16px;
-	font-weight: 600;
-	text-transform: uppercase;
-`;
-
-const Input = styled.input`
-	font-size: 16px;
-	height: 40px;
-	padding: 10px;
-	color: #dcddde;
-	background-color: rgba(0, 0, 0, 0.1);
-	border: 1px solid rgba(0, 0, 0, 0.3);
-	border-radius: 3px;
-
-	&:hover {
-		border: 1px solid rgba(0, 0, 0, 0.5);
-	}
-
-	&:focus {
-		outline: 1px solid #7289da;
-	}
 `;
 
 const RegisterButton = styled.button`
@@ -143,12 +120,6 @@ const RedirectToLogin = styled.div`
 	font-size: 14px;
 	color: #7289da;
 	cursor: pointer;
-`;
-
-const InputContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	margin-bottom: 20px;
 `;
 
 export default Register;

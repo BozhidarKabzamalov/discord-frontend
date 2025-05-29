@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useGetServers } from "../services/serverService";
 import SidebarServerItem from "./SidebarServerItem";
 import SidebarCreateServerItem from "./SidebarCreateServerItem";
+import SidebarJoinServerItem from "./SidebarJoinServerItem";
 
 const Sidebar = () => {
 	const { data: servers } = useGetServers();
@@ -12,7 +13,8 @@ const Sidebar = () => {
 				servers.map((server) => (
 					<SidebarServerItem key={server.id} server={server} />
 				))}
-            <SidebarCreateServerItem />
+			<SidebarCreateServerItem />
+			<SidebarJoinServerItem />
 		</StyledSidebar>
 	);
 };

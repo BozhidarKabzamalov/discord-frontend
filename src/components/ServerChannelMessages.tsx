@@ -32,6 +32,7 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	background-color: ${({ theme }) => theme.colors.gray1100};
 `;
 
 const ChannelName = styled.p`
