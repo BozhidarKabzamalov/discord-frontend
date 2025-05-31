@@ -3,6 +3,15 @@ export enum ChannelType {
 	VOICE = "voice",
 }
 
+export type Category = {
+    id: string;
+    name: string;
+    serverId: number;
+    channels: Channel[];
+    createdAt: string;
+	updatedAt: string;
+}
+
 export type Channel = {
 	id: number;
 	name: string;
@@ -21,7 +30,7 @@ export type Member = {
 export type Server = {
 	id: number;
 	name: string;
-	channels: Channel[];
+    categories: Category[];
 	members: Member[];
 	createdAt: string;
 	updatedAt: string;

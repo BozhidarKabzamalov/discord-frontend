@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ChannelType, Server } from "../types/servers";
+import { Server } from "../types/servers";
 import Channel from "./Channel";
 import { FaPlus } from "react-icons/fa";
 import theme from "../theme.ts";
@@ -14,31 +14,14 @@ const ServerMembers = ({ server }: MemberProps) => {
     const setShowCreateServerChannelDialog = useBoundStore(
 		(state) => state.setShowCreateServerChannelDialog
 	);
-        
-	const channelTypeGroups = [
-		{
-			type: ChannelType.TEXT,
-			title: "Text Channels",
-			channels: server.channels.filter(
-				(channel) => channel.type === ChannelType.TEXT
-			),
-		},
-		{
-			type: ChannelType.VOICE,
-			title: "Voice Channels",
-			channels: server.channels.filter(
-				(channel) => channel.type === ChannelType.VOICE
-			),
-		},
-	];
 
-	const serverChannelsJsx = channelTypeGroups.map((group) => {
+	const serverChannelsJsx = server.categories.map((category) => {
 		return (
-			group.channels.length > 0 && (
-				<ServerChannelsContainer key={group.type}>
+			category.channels.length > 0 && (
+				<ServerChannelsContainer key={category.id}>
 					<ChannelTypeTitleContainer>
-						<ChannelTypeTitle key={`title-${group.type}`}>
-							{group.title}
+						<ChannelTypeTitle key={`title-${category.name}`}>
+							{category.name}
 						</ChannelTypeTitle>
 						<FaPlus
 							size='14'
@@ -48,7 +31,7 @@ const ServerMembers = ({ server }: MemberProps) => {
 							}
 						/>
 					</ChannelTypeTitleContainer>
-					{group.channels.map((channel) => (
+					{category.channels.map((channel) => (
 						<Channel key={channel.id} channel={channel} />
 					))}
 				</ServerChannelsContainer>

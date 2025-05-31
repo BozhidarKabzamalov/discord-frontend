@@ -8,8 +8,8 @@ type Props = {
 };
 
 const SidebarItem: FunctionComponent<Props> = ({ server }) => {
-    const { id, name, channels } = server;
-    const url = `/channels/${id}/${channels[0].id}`;
+    const { id, name } = server;
+    const url = `/channels/${id}`;
 
 	return (
 		<StyledLink to={url}>
