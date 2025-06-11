@@ -1,0 +1,22 @@
+{
+	"translation": {
+		"common": {
+			"continue": "Продължи",
+			"cancel": "Отмени"
+		},
+		"login": {
+			"needAnAccount": "Нуждаеш се от акаунт?",
+			"welcomeBack": "Добре дошъл отново!"
+		},
+		"dashboard": {
+			"createServer": "Създай Сървър",
+			"createCategory": "Създай Категория",
+			"createChannel": "Създай Канал",
+			"editServer": "Редактирай Сървър",
+			"editCategory": "Редактирай Категория",
+			"editChannel": "Редактирай Канал",
+			"joinServer": "Присъедини се към сървър",
+			"members": "Членове"
+		}
+	}
+}

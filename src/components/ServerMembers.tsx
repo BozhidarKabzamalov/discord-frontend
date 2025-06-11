@@ -1,19 +1,21 @@
 import styled from "styled-components";
 import { Member as MemberType } from "../types/servers";
 import Member from "./Member";
+import { useTranslation } from "react-i18next";
 
 type MemberProps = {
 	members: MemberType[];
 };
 
 const ServerMembers = ({ members }: MemberProps) => {
+	const { t } = useTranslation();
 	const serverMembersJsx = members.map((member) => (
 		<Member key={member.id} member={member} />
 	));
 
 	return (
 		<Container>
-			<Title>Members</Title>
+			<Title>{t("dashboard.members")}</Title>
 			<MembersContainer>{serverMembersJsx}</MembersContainer>
 		</Container>
 	);

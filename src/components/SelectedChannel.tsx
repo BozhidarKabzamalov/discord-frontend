@@ -1,15 +1,22 @@
 import { useGetChannelMessages } from "../services/messageService";
 import styled from "styled-components";
 import ChannelMessageInput from "./ChannelMessageInput";
-import { Channel } from "../types/servers";
 import Message from "./Message";
+import { useParams } from "react-router";
+import { useGetServers } from "../services/serverService";
+import { useSocket } from "../hooks/useSocket";
 
-type MemberProps = {
-	channel: Channel;
-};
+const SelectedChannel = () => {
+	const { serverId, channelId } = useParams();
+	const { data: servers } = useGetServers();
+	const server = servers?.find((server) => server.id === parseInt(serverId));
 
-const ServerChannelMessages = ({ channel }: MemberProps) => {
-	const { data: channelMessages } = useGetChannelMessages(channel.id);
+	const channel = server?.categories
+		.flatMap((category) => category.channels || [])
+		.find((channel) => channel.id === parseInt(channelId));
+
+	const { data: channelMessages } = useGetChannelMessages(channelId);
+    useSocket(channelId);
 
 	const channelMessagesJsx = channelMessages?.map((channelMessage) => (
 		<Message key={channelMessage.id} message={channelMessage} />
@@ -17,7 +24,7 @@ const ServerChannelMessages = ({ channel }: MemberProps) => {
 
 	return (
 		<Container>
-			<ChannelName>{channel.name}</ChannelName>
+			<ChannelName>{channel?.name}</ChannelName>
 			<ChannelMessagesAndInputContainer>
 				<ChannelMessagesContainer>
 					{channelMessagesJsx}
@@ -52,6 +59,7 @@ const ChannelMessagesContainer = styled.div`
 	display: flex;
 	flex-direction: column-reverse;
 	flex: 1;
+    margin-bottom: 10px;
 `;
 
-export default ServerChannelMessages;
+export default SelectedChannel;

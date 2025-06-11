@@ -8,17 +8,19 @@ import Server from "./views/Server";
 import useAuth from "./hooks/useAuth";
 import { useEffect } from "react";
 import { useBoundStore } from "./stores/useBoundStore";
+import SelectedChannel from "./components/SelectedChannel";
+import NoSelectedChannel from "./components/NoSelectedChannel";
 
 const App = () => {
-    const { initializeAuth } = useAuth();
-    const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
+	const { initializeAuth } = useAuth();
+	const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
 
-    useEffect(() => {
-        if (authenticatedUser) return;
+	useEffect(() => {
+		if (authenticatedUser) return;
 
-        initializeAuth();
-    }, [authenticatedUser, initializeAuth])
-    
+		initializeAuth();
+	}, [authenticatedUser, initializeAuth]);
+
 	return (
 		<Routes>
 			<Route path='/login' element={<Login />} />
@@ -26,10 +28,13 @@ const App = () => {
 			<Route element={<ProtectedRoutes />}>
 				<Route path='/' element={<Dashboard />}>
 					<Route path='/channels/@me' element={<Register />} />
-					<Route
-						path='/channels/:serverId/:channelId'
-						element={<Server />}
-					/>
+					<Route path='channels/:serverId' element={<Server />}>
+						<Route index element={<NoSelectedChannel />} />
+						<Route
+							path=':channelId'
+							element={<SelectedChannel />}
+						/>
+					</Route>
 				</Route>
 			</Route>
 		</Routes>

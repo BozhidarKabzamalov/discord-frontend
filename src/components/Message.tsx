@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Message as MessageType } from "../types/servers";
+import { FaTrash, FaUser } from "react-icons/fa";
 
 type MessageProps = {
 	message: MessageType;
@@ -10,19 +11,41 @@ const Message = ({ message }: MessageProps) => {
 
 	return (
 		<Container>
-			<ProfilePicture />
+			<ProfilePicture>
+                <FaUser />
+            </ProfilePicture>
 			<Column>
 				<MessageOwner>{user.username}</MessageOwner>
 				<MessageContent>{content}</MessageContent>
 			</Column>
+			<Actions>
+				<DeleteAction>
+					<FaTrash size="20" />
+				</DeleteAction>
+			</Actions>
 		</Container>
 	);
 };
 
+const Actions = styled.div`
+	opacity: 0;
+	margin-left: auto;
+`;
+
 const Container = styled.div`
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	border-radius: 5px;
+
+	&:hover {
+		background-color: ${({ theme }) => theme.colors.gray1200};
+
+		${Actions} {
+			opacity: 1;
+			visibility: visible;
+		}
+	}
 `;
 
 const Column = styled.div`
@@ -31,10 +54,14 @@ const Column = styled.div`
 `
 
 const ProfilePicture = styled.div`
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	background-color: ${({ theme }) => theme.colors.gray400};
+	color: ${({ theme }) => theme.colors.white};
+	background-color: ${({ theme }) => theme.colors.gray1400};
 	margin-right: 15px;
 `;
 
@@ -45,6 +72,10 @@ const MessageOwner = styled.p`
 
 const MessageContent = styled.p`
 	color: ${({ theme }) => theme.colors.gray100};
+`;
+
+const DeleteAction = styled.div`
+	color: ${({ theme }) => theme.colors.red100};
 `;
 
 export default Message;

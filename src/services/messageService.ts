@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
 import { Message } from "../types/servers";
+import { CreateMessagePayload } from "../types/message";
 
 export const getChannelMessages = async (channelId: number) => {
 	try {
@@ -11,7 +12,7 @@ export const getChannelMessages = async (channelId: number) => {
 		return data.messages;
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };
 
@@ -22,16 +23,15 @@ export const useGetChannelMessages = (channelId: number) => {
 	});
 };
 
-export const createChannelMessage = async (channelId: number, content: number) => {
+export const createChannelMessage = async (payload: CreateMessagePayload) => {
 	try {
-		const { data } = await axiosInstance.post(
-			`/channels/${channelId}/messages`,
-			{ content }
-		);
+		const { channelId, content } = payload;
 
-		return data.message;
+		await axiosInstance.post(`/channels/${channelId}/messages`, {
+			content,
+		});
 	} catch (error) {
 		console.log(error);
-        throw error;
+		throw error;
 	}
 };

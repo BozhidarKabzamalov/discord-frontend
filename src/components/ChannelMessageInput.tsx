@@ -1,8 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { createChannelMessage } from "../services/messageService";
+import { useParams } from "react-router";
 
 const ServerMessageInput = () => {
-	const [message, setMessage] = useState("");
+	const [content, setContent] = useState("");
+	const { channelId } = useParams();
 
 	const handleKeyDown = (event) => {
 		if (event.key === "Enter") {
@@ -12,24 +15,17 @@ const ServerMessageInput = () => {
 	};
 
 	const onSubmit = async () => {
-		if (message.trim() === "") return;
+		if (content.trim() === "") return;
 
-		const payload = {
-			content: message,
-			senderId: 2,
-			serverId: 2,
-		};
+		createChannelMessage({ channelId, content });
 
-		//const { data } = await sendServerMessage(payload);
-
-		//setServerMessages([...serverMessages, data]);
-		setMessage("");
+		setContent("");
 	};
 
 	return (
 		<StyledMessageInput
-			value={message}
-			onChange={(event) => setMessage(event.target.value)}
+			value={content}
+			onChange={(event) => setContent(event.target.value)}
 			onKeyDown={handleKeyDown}
 		/>
 	);
@@ -38,7 +34,7 @@ const ServerMessageInput = () => {
 const StyledMessageInput = styled.input`
 	width: 100%;
 	border-radius: 8px 0 0 8px;
-	background-color: #383a40;
+	background-color: ${({ theme }) => theme.colors.gray600};
 	border: none;
 	color: #ffffff;
 	outline: none;

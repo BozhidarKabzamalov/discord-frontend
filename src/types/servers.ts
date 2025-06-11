@@ -1,10 +1,14 @@
-export enum ChannelType {
-	TEXT = "text",
-	VOICE = "voice",
-}
+export type Server = {
+	id: number;
+	name: string;
+	categories: Category[];
+	members: Member[];
+	createdAt: string;
+	updatedAt: string;
+};
 
 export type Category = {
-    id: string;
+    id: number;
     name: string;
     serverId: number;
     channels: Channel[];
@@ -21,21 +25,6 @@ export type Channel = {
 	updatedAt: string;
 };
 
-export type Member = {
-	id: number;
-	username: string;
-	roleId: number;
-};
-
-export type Server = {
-	id: number;
-	name: string;
-    categories: Category[];
-	members: Member[];
-	createdAt: string;
-	updatedAt: string;
-};
-
 export type Message = {
 	id: number;
 	content: string;
@@ -43,3 +32,14 @@ export type Message = {
 	createdAt: string;
 	updatedAt: string;
 };
+
+export type Member = {
+	id: number;
+	username: string;
+	roleId: number;
+};
+
+export enum ChannelType {
+	TEXT = "text",
+	VOICE = "voice",
+}

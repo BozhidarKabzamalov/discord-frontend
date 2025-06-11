@@ -6,12 +6,16 @@ export type AuthSliceType = {
 };
 
 export type DialogSliceType = {
-	showCreateServerChannelDialog: boolean;
-	setShowCreateServerChannelDialog: (payload: boolean) => void;
+	channelCategoryId: number | null;
+	setChannelCategoryId: (payload: number | null) => void;
+	showCreateChannelDialog: boolean;
+	setShowCreateChannelDialog: (payload: boolean) => void;
 	showCreateServerDialog: boolean;
 	setShowCreateServerDialog: (payload: boolean) => void;
 	showJoinServerDialog: boolean;
 	setShowJoinServerDialog: (payload: boolean) => void;
+	showCreateCategoryDialog: boolean;
+	setShowCreateCategoryDialog: (payload: boolean) => void;
 };
 
 export type StoreType = AuthSliceType & DialogSliceType;

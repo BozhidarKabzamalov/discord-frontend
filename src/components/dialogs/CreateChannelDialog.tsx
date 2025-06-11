@@ -2,58 +2,56 @@ import styled from "styled-components";
 import CustomDialog from "./CustomDialog";
 import { useState } from "react";
 import Input from "../Input";
+import { useParams } from "react-router";
 import { useBoundStore } from "../../stores/useBoundStore";
-import { useJoinServer } from "../../services/serverService";
-import { useNavigate } from "react-router";
+import { useCreateChannel } from "../../services/channelService";
+import { CreateChannelPayload } from "../../types/channel";
 import { useTranslation } from "react-i18next";
 
-const JoinServerDialog = () => {
+const CreateServerChannelDialog = () => {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
-	const showJoinServerDialog = useBoundStore(
-		(state) => state.showJoinServerDialog
+	const { mutate: createChannel } = useCreateChannel();
+	const channelCategoryId = useBoundStore((state) => state.channelCategoryId);
+	const showCreateChannelDialog = useBoundStore(
+		(state) => state.showCreateChannelDialog
 	);
-	const setShowJoinServerDialog = useBoundStore(
-		(state) => state.setShowJoinServerDialog
+	const setShowCreateChannelDialog = useBoundStore(
+		(state) => state.setShowCreateChannelDialog
 	);
+	const { serverId } = useParams();
+	const [channelType, setChannelType] = useState<"text" | "voice">("text");
+	const [channelName, setChannelName] = useState<string>("");
 
-	const { mutate: joinServer } = useJoinServer();
-
-	const [inviteCode, setInviteCode] = useState<string>("");
-
-	if (!showJoinServerDialog) return;
+	if (!showCreateChannelDialog) return;
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setInviteCode(e.target.value);
+		setChannelName(e.target.value);
 	};
 
 	const onConfirm = async () => {
-		joinServer(inviteCode, {
-			onSuccess: (response) => {
-				const newServer = response.data.server;
-				navigate(
-					`/channels/${newServer.id}/${newServer.channels[0].id}`
-				);
-			},
-		});
-		setInviteCode("");
-		setShowJoinServerDialog(false);
+		const payload: CreateChannelPayload = {
+			name: channelName,
+			type: channelType,
+			serverId: parseInt(serverId!),
+			categoryId: channelCategoryId,
+		};
+		createChannel(payload);
+		setShowCreateChannelDialog(false);
 	};
 
 	const onCancel = () => {
-		setInviteCode("");
-		setShowJoinServerDialog(false);
+		setShowCreateChannelDialog(false);
 	};
 
-	const title = <Title>{t("dashboard.joinServer")}</Title>;
+	const title = <Title>{t("dashboard.createChannel")}</Title>;
 	const body = (
 		<Body>
 			<Input
-				label='Invite Code'
-				id='inviteCode'
-				name='inviteCode'
+				label='Channel Name'
+				id='channelName'
+				name='channelName'
 				type='text'
-				value={inviteCode}
+				value={channelName}
 				onChange={onChangeHandler}
 				required
 			/>
@@ -63,7 +61,7 @@ const JoinServerDialog = () => {
 		<Actions>
 			<CancelButton onClick={onCancel}>{t("common.cancel")}</CancelButton>
 			<ConfirmButton onClick={onConfirm}>
-				{t("dashboard.joinServer")}
+				{t("dashboard.createChannel")}
 			</ConfirmButton>
 		</Actions>
 	);
@@ -118,4 +116,12 @@ const CancelButton = styled.button`
 	cursor: pointer;
 `;
 
-export default JoinServerDialog;
+const ChannelTypeTextOption = styled.div`
+	background-color: ${({ theme }) => theme.colors.gray700};
+`;
+
+const ChannelTypeVoiceOption = styled.div`
+	background-color: ${({ theme }) => theme.colors.gray700};
+`;
+
+export default CreateServerChannelDialog;

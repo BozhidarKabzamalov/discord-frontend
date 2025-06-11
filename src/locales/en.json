@@ -1,11 +1,22 @@
 {
 	"translation": {
         "common": {
-            "continue": "Continue"
+            "continue": "Continue",
+            "cancel": "Cancel"
         },
         "login": {
             "needAnAccount": "Need an account?",
             "welcomeBack": "Welcome Back!"
-        }
+        },
+        "dashboard": {
+			"createServer": "Create Server",
+			"createCategory": "Create Category",
+			"createChannel": "Create Channel",
+			"editServer": "Edit Server",
+			"editCategory": "Edit Category",
+			"editChannel": "Edit Channel",
+			"joinServer": "Join Server",
+			"members": "Members"
+		}
 	}
 }

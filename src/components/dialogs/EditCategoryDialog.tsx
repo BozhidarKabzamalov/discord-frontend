@@ -2,58 +2,53 @@ import styled from "styled-components";
 import CustomDialog from "./CustomDialog";
 import { useState } from "react";
 import Input from "../Input";
+import { useParams } from "react-router";
 import { useBoundStore } from "../../stores/useBoundStore";
-import { useJoinServer } from "../../services/serverService";
-import { useNavigate } from "react-router";
+import { useCreateCategory } from "../../services/categoryService";
+import { UpdateCategoryPayload } from "../../types/category";
 import { useTranslation } from "react-i18next";
 
-const JoinServerDialog = () => {
+const EditCategoryDialog = () => {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
-	const showJoinServerDialog = useBoundStore(
-		(state) => state.showJoinServerDialog
+	const showCreateCategoryDialog = useBoundStore(
+		(state) => state.showCreateCategoryDialog
 	);
-	const setShowJoinServerDialog = useBoundStore(
-		(state) => state.setShowJoinServerDialog
+	const setShowCreateCategoryDialog = useBoundStore(
+		(state) => state.setShowCreateCategoryDialog
 	);
+	const { serverId, channelId } = useParams();
+	const [categoryName, setCategoryName] = useState<string>("");
+	const { mutate: updateCategory } = useCreateCategory();
 
-	const { mutate: joinServer } = useJoinServer();
-
-	const [inviteCode, setInviteCode] = useState<string>("");
-
-	if (!showJoinServerDialog) return;
+	if (!showCreateCategoryDialog) return;
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setInviteCode(e.target.value);
+		setCategoryName(e.target.value);
 	};
 
 	const onConfirm = async () => {
-		joinServer(inviteCode, {
-			onSuccess: (response) => {
-				const newServer = response.data.server;
-				navigate(
-					`/channels/${newServer.id}/${newServer.channels[0].id}`
-				);
-			},
-		});
-		setInviteCode("");
-		setShowJoinServerDialog(false);
+		const payload: UpdateCategoryPayload = {
+			name: categoryName,
+			serverId: parseInt(serverId!),
+			categoryId: parseInt(channelId!),
+		};
+		updateCategory(payload);
+		setShowCreateCategoryDialog(false);
 	};
 
 	const onCancel = () => {
-		setInviteCode("");
-		setShowJoinServerDialog(false);
+		setShowCreateCategoryDialog(false);
 	};
 
-	const title = <Title>{t("dashboard.joinServer")}</Title>;
+	const title = <Title>{t("dashboard.editCategory")}</Title>;
 	const body = (
 		<Body>
 			<Input
-				label='Invite Code'
-				id='inviteCode'
-				name='inviteCode'
+				label='Category Name'
+				id='categoryName'
+				name='categoryName'
 				type='text'
-				value={inviteCode}
+				value={categoryName}
 				onChange={onChangeHandler}
 				required
 			/>
@@ -63,7 +58,7 @@ const JoinServerDialog = () => {
 		<Actions>
 			<CancelButton onClick={onCancel}>{t("common.cancel")}</CancelButton>
 			<ConfirmButton onClick={onConfirm}>
-				{t("dashboard.joinServer")}
+				{t("dashboard.editCategory")}
 			</ConfirmButton>
 		</Actions>
 	);
@@ -118,4 +113,4 @@ const CancelButton = styled.button`
 	cursor: pointer;
 `;
 
-export default JoinServerDialog;
+export default EditCategoryDialog;

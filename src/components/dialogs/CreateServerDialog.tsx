@@ -5,8 +5,10 @@ import Input from "../Input";
 import { useBoundStore } from "../../stores/useBoundStore";
 import { useCreateServer } from "../../services/serverService";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 const CreateServerDialog = () => {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const showCreateServerDialog = useBoundStore(
 		(state) => state.showCreateServerDialog
@@ -33,16 +35,16 @@ const CreateServerDialog = () => {
 				);
 			},
 		});
-        setServerName("");
+		setServerName("");
 		setShowCreateServerDialog(false);
 	};
 
 	const onCancel = () => {
-        setServerName("");
+		setServerName("");
 		setShowCreateServerDialog(false);
 	};
 
-	const title = <Title>Create Your Server</Title>;
+	const title = <Title>{t("dashboard.createServer")}</Title>;
 	const body = (
 		<Body>
 			<Input
@@ -58,8 +60,10 @@ const CreateServerDialog = () => {
 	);
 	const actions = (
 		<Actions>
-			<CancelButton onClick={onCancel}>Cancel</CancelButton>
-			<ConfirmButton onClick={onConfirm}>Create Server</ConfirmButton>
+			<CancelButton onClick={onCancel}>{t("common.cancel")}</CancelButton>
+			<ConfirmButton onClick={onConfirm}>
+				{t("dashboard.createServer")}
+			</ConfirmButton>
 		</Actions>
 	);
 
