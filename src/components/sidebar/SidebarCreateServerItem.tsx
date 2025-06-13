@@ -1,18 +1,18 @@
 import { FaPlusCircle } from "react-icons/fa";
 import styled from "styled-components";
-import { useBoundStore } from "../stores/useBoundStore";
-import JoinServerDialog from "./dialogs/JoinServerDialog";
+import { useBoundStore } from "../../stores/useBoundStore";
+import CreateServerDialog from "../dialogs/CreateServerDialog";
 
-const SidebarJoinServerItem = () => {
-	const setShowJoinServerDialog = useBoundStore(
-		(state) => state.setShowJoinServerDialog
+const SidebarCreateServerItem = () => {
+	const setShowCreateServerDialog = useBoundStore(
+		(state) => state.setShowCreateServerDialog
 	);
 	return (
 		<>
-			<Container onClick={() => setShowJoinServerDialog(true)}>
+			<Container onClick={() => setShowCreateServerDialog(true)}>
 				<FaPlusCircle />
 			</Container>
-			<JoinServerDialog />
+			<CreateServerDialog />
 		</>
 	);
 };
@@ -27,6 +27,7 @@ const Container = styled.div`
 	background-color: ${({ theme }) => theme.colors.gray800};
 	color: ${({ theme }) => theme.colors.gray100};
 	cursor: pointer;
+    margin-bottom: 15px;
 
 	&:hover {
 		color: ${({ theme }) => theme.colors.white};
@@ -34,4 +35,4 @@ const Container = styled.div`
 	}
 `;
 
-export default SidebarJoinServerItem;
+export default SidebarCreateServerItem;

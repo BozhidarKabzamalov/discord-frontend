@@ -15,7 +15,7 @@ const Server = () => {
 		<Container>
 			<ServerChannels server={server} />
             <Outlet />
-			<ServerMembers members={server.members} />
+			<ServerMembers server={server} />
 		</Container>
 	);
 };

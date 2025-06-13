@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { useGetServers } from "../services/serverService";
+import { useGetServers } from "../../services/serverService";
 import SidebarServerItem from "./SidebarServerItem";
 import SidebarCreateServerItem from "./SidebarCreateServerItem";
 import SidebarJoinServerItem from "./SidebarJoinServerItem";
 import { FaSignOutAlt } from "react-icons/fa";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import SidebarLanguageSwitcherItem from "./SidebarLanguageSwitcherItem";
 
 const Sidebar = () => {

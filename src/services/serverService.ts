@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
 import { Server } from "../types/servers";
+import { useNavigate } from "react-router";
 
 export const getServers = async () => {
 	try {
@@ -35,37 +36,13 @@ export const createServer = async (serverName: string) => {
 
 export const useCreateServer = () => {
 	const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
 	return useMutation({
 		mutationFn: (serverName: string) => createServer(serverName),
 		onSuccess: (response) => {
 			const newServer = response.data.server;
-
-			queryClient.setQueryData<Server[]>(
-				["servers"],
-				(oldServers = []) => [...oldServers, newServer]
-			);
-		},
-	});
-};
-
-export const joinServer = async (inviteCode: string) => {
-	try {
-		return await axiosInstance.post(`/servers/join/${inviteCode}`);
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
-};
-
-export const useJoinServer = () => {
-	const queryClient = useQueryClient();
-
-	return useMutation({
-		mutationFn: (invideCode: string) => joinServer(invideCode),
-		onSuccess: (response) => {
-			const newServer = response.data.server;
-
+            navigate(`/channels/${newServer.id}`)
 			queryClient.setQueryData<Server[]>(
 				["servers"],
 				(oldServers = []) => [...oldServers, newServer]
@@ -76,68 +53,35 @@ export const useJoinServer = () => {
 
 export const deleteServer = async (serverId: number) => {
 	try {
-		await axiosInstance.delete(`/servers/${serverId}`);
+		return await axiosInstance.delete(`/servers/${serverId}`);
 	} catch (error) {
 		console.log(error);
 		throw error;
 	}
+};
+
+export const useDeleteServer = () => {
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+		mutationFn: deleteServer,
+		onSuccess: (_data, serverId) => {
+            navigate("/");
+			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
+				if (!oldServers) {
+					return [];
+				}
+
+				return oldServers.filter((server) => server.id !== serverId);
+			});
+		},
+	});
 };
 
 export const editServer = async (serverId: number, payload: unknown) => {
 	try {
 		await axiosInstance.put(`/servers/${serverId}`, payload);
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
-};
-
-export const addUserToServer = async (serverId: number, userId: number) => {
-	try {
-		await axiosInstance.post(
-			`/servers/${serverId}/memberships/${userId}/add`
-		);
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
-};
-
-export const removeUserFromServer = async (
-	serverId: number,
-	userId: number
-) => {
-	try {
-		await axiosInstance.delete(
-			`/servers/${serverId}/memberships/${userId}/remove`
-		);
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
-};
-
-export const getAllServerMembers = async (serverId: number) => {
-	try {
-		const { data } = await axiosInstance.get(
-			`/servers/${serverId}/members`
-		);
-
-		return data.data;
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
-};
-
-export const promoteUserToAdmin = async (
-	serverId: number,
-	memberId: number
-) => {
-	try {
-		await axiosInstance.put(
-			`/servers/${serverId}/memberships/${memberId}/promote`
-		);
 	} catch (error) {
 		console.log(error);
 		throw error;

@@ -3,8 +3,9 @@ import {
 	ChannelType as ChannelTypeEnum,
 	Channel as ChannelType,
 } from "../types/servers";
-import { FaHashtag, FaTrash, FaVolumeDown } from "react-icons/fa";
+import { FaHashtag, FaPen, FaTrash, FaVolumeDown } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
+import { useDeleteChannel } from "../services/channelService";
 
 type ChannelProps = {
 	channel: ChannelType;
@@ -12,9 +13,14 @@ type ChannelProps = {
 
 const Channel = ({ channel }: ChannelProps) => {
 	const navigate = useNavigate();
-	const { serverId } = useParams<{ serverId: string; channelId: string }>();
+	const { serverId, channelId } = useParams();
 	const { id, name, type } = channel;
 	const isTextType = type === ChannelTypeEnum.TEXT;
+    const { mutate: deleteChannel } = useDeleteChannel({
+		onSuccess: () => {
+            if (channel.id === parseInt(channelId!)) navigate(`/channels/${serverId}`);
+		},
+	}); 
 
 	const handleChannelClick = () => {
 		if (isTextType) {
@@ -22,13 +28,24 @@ const Channel = ({ channel }: ChannelProps) => {
 		}
 	};
 
+    const handleOnDelete = (event) => {
+        event.stopPropagation();
+
+        deleteChannel({ serverId: parseInt(serverId!), channelId: id });
+    }
+
 	return (
 		<Container onClick={handleChannelClick}>
 			{isTextType ? <FaHashtag size='18' /> : <FaVolumeDown size='18' />}
 			<ChannelName>{name}</ChannelName>
-			<DeleteAction>
-				<FaTrash size='14' />
-			</DeleteAction>
+			<Actions>
+				<UpdateAction>
+					<FaPen />
+				</UpdateAction>
+				<DeleteAction onClick={handleOnDelete}>
+					<FaTrash />
+				</DeleteAction>
+			</Actions>
 		</Container>
 	);
 };
@@ -57,8 +74,18 @@ const ChannelName = styled.p`
 	font-weight: 700;
 `;
 
-const DeleteAction = styled.div`
+const Actions = styled.div`
+    display: flex;
+    flex-direction: row;
 	margin-left: auto;
+`;
+
+const UpdateAction = styled.div`
+	cursor: pointer;
+`;
+
+const DeleteAction = styled.div`
+	margin-left: 10px;
 	cursor: pointer;
 `;
 

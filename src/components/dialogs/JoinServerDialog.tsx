@@ -3,9 +3,9 @@ import CustomDialog from "./CustomDialog";
 import { useState } from "react";
 import Input from "../Input";
 import { useBoundStore } from "../../stores/useBoundStore";
-import { useJoinServer } from "../../services/serverService";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
+import { useJoinServer } from "../../services/membershipService";
 
 const JoinServerDialog = () => {
 	const { t } = useTranslation();
@@ -32,7 +32,7 @@ const JoinServerDialog = () => {
 			onSuccess: (response) => {
 				const newServer = response.data.server;
 				navigate(
-					`/channels/${newServer.id}/${newServer.channels[0].id}`
+					`/channels/${newServer.id}`
 				);
 			},
 		});

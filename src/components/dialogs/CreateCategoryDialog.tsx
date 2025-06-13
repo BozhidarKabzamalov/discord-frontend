@@ -32,6 +32,7 @@ const CreateServerChannelDialog = () => {
 			serverId: parseInt(serverId!),
 		};
 		createCategory(payload);
+        setCategoryName("");
 		setShowCreateCategoryDialog(false);
 	};
 

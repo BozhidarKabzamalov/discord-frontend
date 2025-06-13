@@ -1,11 +1,18 @@
 import styled from "styled-components";
 import { Server } from "../types/servers";
 import Channel from "./Channel";
-import { FaFolderPlus, FaPen, FaPlus, FaSignOutAlt, FaTrash } from "react-icons/fa";
+import {
+	FaPen,
+	FaPlus,
+	FaSignOutAlt,
+	FaTrash,
+} from "react-icons/fa";
 import CreateChannelDialog from "./dialogs/CreateChannelDialog.tsx";
 import { useBoundStore } from "../stores/useBoundStore.ts";
 import { useDeleteCategory } from "../services/categoryService.ts";
 import CreateCategoryDialog from "./dialogs/CreateCategoryDialog.tsx";
+import { useDeleteServer } from "../services/serverService.ts";
+import { useLeaveServer } from "../services/membershipService.ts";
 
 type MemberProps = {
 	server: Server;
@@ -13,6 +20,8 @@ type MemberProps = {
 
 const ServerMembers = ({ server }: MemberProps) => {
 	const { mutate: deleteCategory } = useDeleteCategory();
+    const { mutate: deleteServer } = useDeleteServer();
+    const { mutate: leaveServer } = useLeaveServer();
 	const setShowCreateChannelDialog = useBoundStore(
 		(state) => state.setShowCreateChannelDialog
 	);
@@ -23,9 +32,17 @@ const ServerMembers = ({ server }: MemberProps) => {
 		(state) => state.setChannelCategoryId
 	);
 
-	const onDelete = async (categoryId: number) => {
+	const onDeleteCategory = async (categoryId: number) => {
 		deleteCategory({ serverId: server.id, categoryId });
 	};
+
+    const onDeleteServer = () => {
+        deleteServer(server.id);
+    }
+
+    const onLeaveServer = () => {
+        leaveServer(server.id);
+    }
 
 	const serverCategoriesJsx = server.categories.map((category) => {
 		return (
@@ -41,13 +58,15 @@ const ServerMembers = ({ server }: MemberProps) => {
 								setChannelCategoryId(category.id);
 							}}
 						>
-							<FaPlus size='14' />
+							<FaPlus />
 						</CreateAction>
 						<UpdateAction>
 							<FaPen />
 						</UpdateAction>
-						<DeleteAction onClick={() => onDelete(category.id)}>
-							<FaTrash size='14' />
+						<DeleteAction
+							onClick={() => onDeleteCategory(category.id)}
+						>
+							<FaTrash />
 						</DeleteAction>
 					</Actions>
 				</ChannelTypeTitleContainer>
@@ -63,18 +82,20 @@ const ServerMembers = ({ server }: MemberProps) => {
 			<ServerNameContainer>
 				<ServerName>{server.name}</ServerName>
 				<Actions>
+					<ExitAction onClick={onLeaveServer}>
+						<FaSignOutAlt />
+					</ExitAction>
 					<CreateAction
 						onClick={() => setShowCreateCategoryDialog(true)}
 					>
-						<FaFolderPlus size='14' />
+						<FaPlus />
 					</CreateAction>
 					<UpdateAction>
 						<FaPen />
 					</UpdateAction>
-					<DeleteAction>
-						<FaTrash size='14' />
+					<DeleteAction onClick={onDeleteServer}>
+						<FaTrash />
 					</DeleteAction>
-                    <ExitAction><FaSignOutAlt /></ExitAction>
 				</Actions>
 			</ServerNameContainer>
 			{serverCategoriesJsx}
@@ -139,17 +160,17 @@ const Actions = styled.div`
 `;
 
 const CreateAction = styled.div`
-	margin-right: 10px;
+	margin-left: 10px;
 	cursor: pointer;
 `;
 
 const UpdateAction = styled.div`
-	margin-right: 10px;
+	margin-left: 10px;
 	cursor: pointer;
 `;
 
 const DeleteAction = styled.div`
-	margin-right: 10px;
+	margin-left: 10px;
 	cursor: pointer;
 `;
 

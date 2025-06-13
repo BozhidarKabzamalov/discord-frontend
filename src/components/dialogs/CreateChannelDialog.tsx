@@ -37,6 +37,7 @@ const CreateServerChannelDialog = () => {
 		};
 		createChannel(payload);
 		setShowCreateChannelDialog(false);
+        setChannelName("");
 	};
 
 	const onCancel = () => {

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
-import { CreateChannelPayload } from "../types/channel";
+import { CreateChannelPayload, DeleteChannelPayload } from "../types/channel";
 import { Server } from "../types/servers";
 
 export const createChannel = async (payload: CreateChannelPayload) => {
@@ -28,14 +28,12 @@ export const useCreateChannel = () => {
 
 			const newChannel = response.data.channel;
 
-            console.log('WTF', newChannel);
-
 			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
 				if (!oldServers) {
 					return [];
 				}
 
-				const hehe = oldServers.map((server) => {
+				return oldServers.map((server) => {
 					if (server.id !== serverId) return server;
 
 					const updatedCategories = server.categories.map(
@@ -46,10 +44,7 @@ export const useCreateChannel = () => {
 
 							return {
 								...category,
-								channels: [
-									...category.channels,
-									newChannel,
-								],
+								channels: [...category.channels, newChannel],
 							};
 						}
 					);
@@ -59,11 +54,71 @@ export const useCreateChannel = () => {
 						categories: updatedCategories,
 					};
 				});
-
-                console.log(hehe)
-
-                return hehe;
 			});
+		},
+	});
+};
+
+export const deleteChannel = async (payload: DeleteChannelPayload) => {
+	try {
+		const { serverId, channelId } = payload;
+
+		return await axiosInstance.delete(
+			`/servers/${serverId}/channels/${channelId}`
+		);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+interface UseDeleteServerOptions {
+	onSuccess?: () => void;
+}
+
+export const useDeleteChannel = (options: UseDeleteServerOptions = {}) => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: deleteChannel,
+		onSuccess: (_data, variables) => {
+			const { serverId, channelId } = variables;
+
+			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
+				if (!oldServers) {
+					return [];
+				}
+
+				return oldServers.map((server) => {
+					if (server.id !== serverId) {
+						return server;
+					}
+
+					return {
+						...server,
+						categories: server.categories.map((category) => {
+							const channelExistsInCategory =
+								category.channels.some(
+									(channel) => channel.id === channelId
+								);
+
+							if (!channelExistsInCategory) {
+								return category;
+							}
+
+							return {
+								...category,
+								channels: category.channels.filter(
+									(channel) => channel.id !== channelId
+								),
+							};
+						}),
+					};
+				});
+			});
+
+			if (options.onSuccess) {
+				options.onSuccess();
+			}
 		},
 	});
 };

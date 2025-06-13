@@ -4,3 +4,8 @@ export type CreateChannelPayload = {
 	serverId: number;
 	categoryId: number | null;
 };
+
+export type DeleteChannelPayload = {
+	serverId: number;
+    channelId: number;
+};

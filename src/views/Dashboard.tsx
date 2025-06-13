@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Outlet } from "react-router";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/sidebar/Sidebar";
 
 const Dashboard = () => {
 	return (

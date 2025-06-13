@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import styled from "styled-components";
-import { Server } from "../types/servers";
+import { Server } from "../../types/servers";
 import { Link } from "react-router";
 
 type Props = {
