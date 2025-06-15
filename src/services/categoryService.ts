@@ -109,9 +109,9 @@ export const useUpdateCategory = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: deleteCategory,
+		mutationFn: updateCategory,
 		onSuccess: (_data, variables) => {
-			const { serverId, categoryId } = variables;
+			const { name, serverId, categoryId } = variables;
 
 			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
 				if (!oldServers) {
@@ -120,8 +120,12 @@ export const useUpdateCategory = () => {
 
 				return oldServers.map((server) => {
 					if (server.id === serverId) {
-						const updatedCategories = server.categories.filter(
-							(category: Category) => category.id !== categoryId
+						const updatedCategories = server.categories.map(
+							(category: Category) => {
+								if (category.id !== categoryId) return category;
+
+								return { ...category, name };
+							}
 						);
 						return { ...server, categories: updatedCategories };
 					}

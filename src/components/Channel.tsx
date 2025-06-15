@@ -6,6 +6,7 @@ import {
 import { FaHashtag, FaPen, FaTrash, FaVolumeDown } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
 import { useDeleteChannel } from "../services/channelService";
+import { useBoundStore } from "../stores/useBoundStore";
 
 type ChannelProps = {
 	channel: ChannelType;
@@ -16,11 +17,16 @@ const Channel = ({ channel }: ChannelProps) => {
 	const { serverId, channelId } = useParams();
 	const { id, name, type } = channel;
 	const isTextType = type === ChannelTypeEnum.TEXT;
-    const { mutate: deleteChannel } = useDeleteChannel({
+	const { mutate: deleteChannel } = useDeleteChannel({
 		onSuccess: () => {
-            if (channel.id === parseInt(channelId!)) navigate(`/channels/${serverId}`);
+			if (channel.id === parseInt(channelId!))
+				navigate(`/channels/${serverId}`);
 		},
-	}); 
+	});
+	const setShowEditChannelDialog = useBoundStore(
+		(state) => state.setShowEditChannelDialog
+	);
+	const setChannelId = useBoundStore((state) => state.setChannelId);
 
 	const handleChannelClick = () => {
 		if (isTextType) {
@@ -28,18 +34,23 @@ const Channel = ({ channel }: ChannelProps) => {
 		}
 	};
 
-    const handleOnDelete = (event) => {
-        event.stopPropagation();
+	const handleOnDelete = (event) => {
+		event.stopPropagation();
 
-        deleteChannel({ serverId: parseInt(serverId!), channelId: id });
-    }
+		deleteChannel({ serverId: parseInt(serverId!), channelId: id });
+	};
 
 	return (
 		<Container onClick={handleChannelClick}>
 			{isTextType ? <FaHashtag size='18' /> : <FaVolumeDown size='18' />}
 			<ChannelName>{name}</ChannelName>
 			<Actions>
-				<UpdateAction>
+				<UpdateAction
+					onClick={() => {
+						setChannelId(id);
+						setShowEditChannelDialog(true);
+					}}
+				>
 					<FaPen />
 				</UpdateAction>
 				<DeleteAction onClick={handleOnDelete}>
@@ -75,8 +86,8 @@ const ChannelName = styled.p`
 `;
 
 const Actions = styled.div`
-    display: flex;
-    flex-direction: row;
+	display: flex;
+	flex-direction: row;
 	margin-left: auto;
 `;
 

@@ -37,6 +37,7 @@ const CreateServerChannelDialog = () => {
 	};
 
 	const onCancel = () => {
+        setCategoryName("");
 		setShowCreateCategoryDialog(false);
 	};
 
@@ -44,7 +45,7 @@ const CreateServerChannelDialog = () => {
 	const body = (
 		<Body>
 			<Input
-				label='Category Name'
+				label={t("dashboard.categoryName")}
 				id='categoryName'
 				name='categoryName'
 				type='text'

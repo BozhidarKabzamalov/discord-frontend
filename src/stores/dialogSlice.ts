@@ -2,6 +2,10 @@ import { StateCreator } from "zustand";
 import { DialogSliceType } from "../types/store";
 
 const createDialogSlice: StateCreator<DialogSliceType> = (set) => ({
+	serverId: null,
+	setServerId: (payload) => set(() => ({ serverId: payload })),
+	channelId: null,
+	setChannelId: (payload) => set(() => ({ channelId: payload })),
 	channelCategoryId: null,
 	setChannelCategoryId: (payload) =>
 		set(() => ({ channelCategoryId: payload })),
@@ -17,6 +21,15 @@ const createDialogSlice: StateCreator<DialogSliceType> = (set) => ({
 	showCreateCategoryDialog: false,
 	setShowCreateCategoryDialog: (payload) =>
 		set(() => ({ showCreateCategoryDialog: payload })),
+	showEditServerDialog: false,
+	setShowEditServerDialog: (payload) =>
+		set(() => ({ showEditServerDialog: payload })),
+	showEditCategoryDialog: false,
+	setShowEditCategoryDialog: (payload) =>
+		set(() => ({ showEditCategoryDialog: payload })),
+	showEditChannelDialog: false,
+	setShowEditChannelDialog: (payload) =>
+		set(() => ({ showEditChannelDialog: payload })),
 });
 
 export default createDialogSlice;

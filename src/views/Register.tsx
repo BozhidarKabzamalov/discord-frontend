@@ -5,8 +5,10 @@ import { registerUser } from "../services/userService";
 import { useNavigate } from "react-router";
 import { RegisterPayload } from "../types/auth";
 import Input from "../components/Input";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
+    const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState<RegisterPayload>({
 		username: "",
@@ -30,7 +32,7 @@ const Register = () => {
 	return (
 		<Container>
 			<Form onSubmit={onSubmitHandler}>
-				<Title>Create an account</Title>
+				<Title>{t("register.createAnAccount")}</Title>
 				<Input
 					label='Username'
 					id='username'
@@ -54,13 +56,13 @@ const Register = () => {
 					id='password'
 					name='password'
 					type='password'
-					value={formData.email}
+					value={formData.password}
 					onChange={onChangeHandler}
 					required
 				/>
-				<RegisterButton>Continue</RegisterButton>
+				<RegisterButton>{t("common.continue")}</RegisterButton>
 				<RedirectToLogin onClick={() => navigate("/login")}>
-					Already have an account?
+					{t("register.alreadyHaveAnAccount")}
 				</RedirectToLogin>
 			</Form>
 		</Container>

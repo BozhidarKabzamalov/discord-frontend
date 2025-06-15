@@ -25,6 +25,7 @@ const useAuth = () => {
 			);
 		} catch (error) {
 			console.log(error);
+            throw error;
 		}
 	};
 

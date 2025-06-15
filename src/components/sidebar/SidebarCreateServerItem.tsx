@@ -2,6 +2,9 @@ import { FaPlusCircle } from "react-icons/fa";
 import styled from "styled-components";
 import { useBoundStore } from "../../stores/useBoundStore";
 import CreateServerDialog from "../dialogs/CreateServerDialog";
+import EditServerDialog from "../dialogs/EditServerDialog";
+import EditCategoryDialog from "../dialogs/EditCategoryDialog";
+import EditChannelDialog from "../dialogs/EditChannelDialog";
 
 const SidebarCreateServerItem = () => {
 	const setShowCreateServerDialog = useBoundStore(
@@ -13,6 +16,9 @@ const SidebarCreateServerItem = () => {
 				<FaPlusCircle />
 			</Container>
 			<CreateServerDialog />
+            <EditServerDialog />
+            <EditCategoryDialog />
+            <EditChannelDialog />
 		</>
 	);
 };

@@ -4,10 +4,15 @@
             "continue": "Continue",
             "cancel": "Cancel"
         },
-        "login": {
-            "needAnAccount": "Need an account?",
-            "welcomeBack": "Welcome Back!"
+        "register": {
+            "createAnAccount": "Create an account",
+            "alreadyHaveAnAccount": "Already have an account?"
         },
+        "login": {
+			"needAnAccount": "Need an account?",
+			"welcomeBack": "Welcome Back!",
+			"invalidLogin": "Email or password is invalid"
+		},
         "dashboard": {
 			"createServer": "Create Server",
 			"createCategory": "Create Category",
@@ -16,7 +21,12 @@
 			"editCategory": "Edit Category",
 			"editChannel": "Edit Channel",
 			"joinServer": "Join Server",
-			"members": "Members"
+			"members": "Members",
+            "serverName": "Server Name",
+            "categoryName": "Category Name",
+            "channelName": "Channel Name",
+            "noServerSelected": "No Server Selected",
+            "noChannelSelected": "No Channel Selected"
 		}
 	}
 }

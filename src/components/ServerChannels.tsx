@@ -1,12 +1,7 @@
 import styled from "styled-components";
 import { Server } from "../types/servers";
 import Channel from "./Channel";
-import {
-	FaPen,
-	FaPlus,
-	FaSignOutAlt,
-	FaTrash,
-} from "react-icons/fa";
+import { FaPen, FaPlus, FaSignOutAlt, FaTrash } from "react-icons/fa";
 import CreateChannelDialog from "./dialogs/CreateChannelDialog.tsx";
 import { useBoundStore } from "../stores/useBoundStore.ts";
 import { useDeleteCategory } from "../services/categoryService.ts";
@@ -20,8 +15,8 @@ type MemberProps = {
 
 const ServerMembers = ({ server }: MemberProps) => {
 	const { mutate: deleteCategory } = useDeleteCategory();
-    const { mutate: deleteServer } = useDeleteServer();
-    const { mutate: leaveServer } = useLeaveServer();
+	const { mutate: deleteServer } = useDeleteServer();
+	const { mutate: leaveServer } = useLeaveServer();
 	const setShowCreateChannelDialog = useBoundStore(
 		(state) => state.setShowCreateChannelDialog
 	);
@@ -31,18 +26,25 @@ const ServerMembers = ({ server }: MemberProps) => {
 	const setChannelCategoryId = useBoundStore(
 		(state) => state.setChannelCategoryId
 	);
+	const setShowEditServerDialog = useBoundStore(
+		(state) => state.setShowEditServerDialog
+	);
+    const setServerId = useBoundStore((state) => state.setServerId);
+    const setShowEditCategoryDialog = useBoundStore(
+		(state) => state.setShowEditCategoryDialog
+	);
 
 	const onDeleteCategory = async (categoryId: number) => {
 		deleteCategory({ serverId: server.id, categoryId });
 	};
 
-    const onDeleteServer = () => {
-        deleteServer(server.id);
-    }
+	const onDeleteServer = () => {
+		deleteServer(server.id);
+	};
 
-    const onLeaveServer = () => {
-        leaveServer(server.id);
-    }
+	const onLeaveServer = () => {
+		leaveServer(server.id);
+	};
 
 	const serverCategoriesJsx = server.categories.map((category) => {
 		return (
@@ -60,7 +62,12 @@ const ServerMembers = ({ server }: MemberProps) => {
 						>
 							<FaPlus />
 						</CreateAction>
-						<UpdateAction>
+						<UpdateAction
+							onClick={() => {
+                                setShowEditCategoryDialog(true)
+                                setChannelCategoryId(category.id);
+                            }}
+						>
 							<FaPen />
 						</UpdateAction>
 						<DeleteAction
@@ -90,7 +97,12 @@ const ServerMembers = ({ server }: MemberProps) => {
 					>
 						<FaPlus />
 					</CreateAction>
-					<UpdateAction>
+					<UpdateAction
+						onClick={() => {
+							setShowEditServerDialog(true);
+                            setServerId(server.id);
+						}}
+					>
 						<FaPen />
 					</UpdateAction>
 					<DeleteAction onClick={onDeleteServer}>

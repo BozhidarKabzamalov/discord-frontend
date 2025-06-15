@@ -43,3 +43,8 @@ export enum ChannelType {
 	TEXT = "text",
 	VOICE = "voice",
 }
+
+export type EditServerPayload = {
+    name: string,
+    serverId: number,
+}

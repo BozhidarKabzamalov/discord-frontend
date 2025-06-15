@@ -2,58 +2,49 @@ import styled from "styled-components";
 import CustomDialog from "./CustomDialog";
 import { useState } from "react";
 import Input from "../Input";
-import { useParams } from "react-router";
 import { useBoundStore } from "../../stores/useBoundStore";
-import { useCreateChannel } from "../../services/channelService";
-import { CreateChannelPayload } from "../../types/channel";
 import { useTranslation } from "react-i18next";
+import { useEditServer } from "../../services/serverService";
 
-const CreateChannelDialog = () => {
+const EditServerDialog = () => {
 	const { t } = useTranslation();
-	const { mutate: createChannel } = useCreateChannel();
-	const channelCategoryId = useBoundStore((state) => state.channelCategoryId);
-	const showCreateChannelDialog = useBoundStore(
-		(state) => state.showCreateChannelDialog
+	const showEditServerDialog = useBoundStore(
+		(state) => state.showEditServerDialog
 	);
-	const setShowCreateChannelDialog = useBoundStore(
-		(state) => state.setShowCreateChannelDialog
+	const setShowEditServerDialog = useBoundStore(
+		(state) => state.setShowEditServerDialog
 	);
-	const { serverId } = useParams();
-	const [channelType, setChannelType] = useState<"text" | "voice">("text");
-	const [channelName, setChannelName] = useState<string>("");
+	const serverId = useBoundStore((state) => state.serverId);
+	const { mutate: editServer } = useEditServer();
 
-	if (!showCreateChannelDialog) return;
+	const [serverName, setServerName] = useState<string>("");
+
+	if (!showEditServerDialog) return;
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setChannelName(e.target.value);
+		setServerName(e.target.value);
 	};
 
 	const onConfirm = async () => {
-		const payload: CreateChannelPayload = {
-			name: channelName,
-			type: channelType,
-			serverId: parseInt(serverId!),
-			categoryId: channelCategoryId,
-		};
-		createChannel(payload);
-		setShowCreateChannelDialog(false);
-        setChannelName("");
+		editServer({ name: serverName, serverId: serverId! });
+		setServerName("");
+		setShowEditServerDialog(false);
 	};
 
 	const onCancel = () => {
-        setChannelName("");
-		setShowCreateChannelDialog(false);
+		setServerName("");
+		setShowEditServerDialog(false);
 	};
 
-	const title = <Title>{t("dashboard.createChannel")}</Title>;
+	const title = <Title>{t("dashboard.editServer")}</Title>;
 	const body = (
 		<Body>
 			<Input
-				label={t("dashboard.channelName")}
-				id='channelName'
-				name='channelName'
+				label={t("dashboard.serverName")}
+				id='serverName'
+				name='serverName'
 				type='text'
-				value={channelName}
+				value={serverName}
 				onChange={onChangeHandler}
 				required
 			/>
@@ -63,7 +54,7 @@ const CreateChannelDialog = () => {
 		<Actions>
 			<CancelButton onClick={onCancel}>{t("common.cancel")}</CancelButton>
 			<ConfirmButton onClick={onConfirm}>
-				{t("dashboard.createChannel")}
+				{t("dashboard.editServer")}
 			</ConfirmButton>
 		</Actions>
 	);
@@ -118,12 +109,4 @@ const CancelButton = styled.button`
 	cursor: pointer;
 `;
 
-const ChannelTypeTextOption = styled.div`
-	background-color: ${({ theme }) => theme.colors.gray700};
-`;
-
-const ChannelTypeVoiceOption = styled.div`
-	background-color: ${({ theme }) => theme.colors.gray700};
-`;
-
-export default CreateChannelDialog;
+export default EditServerDialog;

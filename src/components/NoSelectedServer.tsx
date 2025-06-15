@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
-const NoSelectedChannel = () => {
+const NoSelectedServer = () => {
 	const { t } = useTranslation();
 
 	return (
 		<Container>
-			<Title>{t("dashboard.noChannelSelected")}</Title>
+			<Title>{t("dashboard.noServerSelected")}</Title>
 		</Container>
 	);
 };
@@ -29,4 +29,4 @@ const Title = styled.h2`
 	text-transform: uppercase;
 `;
 
-export default NoSelectedChannel;
+export default NoSelectedServer;

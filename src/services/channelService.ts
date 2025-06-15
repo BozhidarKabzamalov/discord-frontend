@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
-import { CreateChannelPayload, DeleteChannelPayload } from "../types/channel";
+import {
+	CreateChannelPayload,
+	DeleteChannelPayload,
+	UpdateChannelPayload,
+} from "../types/channel";
 import { Server } from "../types/servers";
 
 export const createChannel = async (payload: CreateChannelPayload) => {
@@ -119,6 +123,59 @@ export const useDeleteChannel = (options: UseDeleteServerOptions = {}) => {
 			if (options.onSuccess) {
 				options.onSuccess();
 			}
+		},
+	});
+};
+
+export const updateChannel = async (payload: UpdateChannelPayload) => {
+	const { serverId, channelId, name } = payload;
+
+	try {
+		return await axiosInstance.put(
+			`/servers/${serverId}/channels/${channelId}`,
+			{ name }
+		);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+export const useUpdateChannel = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: updateChannel,
+		onSuccess: (_data, variables) => {
+			const { name, serverId, channelId } = variables;
+
+			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
+				if (!oldServers) {
+					return [];
+				}
+
+				return oldServers.map((server) => {
+					if (server.id !== serverId) {
+						return server;
+					}
+
+					const updatedCategories = server.categories.map(
+						(category) => {
+							const updatedChannels = category.channels.map(
+								(channel) => {
+									if (channel.id !== channelId) {
+										return channel;
+									}
+									return { ...channel, name };
+								}
+							);
+
+							return { ...category, channels: updatedChannels };
+						}
+					);
+
+					return { ...server, categories: updatedCategories };
+				});
+			});
 		},
 	});
 };

@@ -4,48 +4,46 @@ import { useState } from "react";
 import Input from "../Input";
 import { useParams } from "react-router";
 import { useBoundStore } from "../../stores/useBoundStore";
-import { useCreateChannel } from "../../services/channelService";
-import { CreateChannelPayload } from "../../types/channel";
+import { useUpdateChannel } from "../../services/channelService";
 import { useTranslation } from "react-i18next";
 
-const CreateChannelDialog = () => {
+const EditChannelDialog = () => {
 	const { t } = useTranslation();
-	const { mutate: createChannel } = useCreateChannel();
-	const channelCategoryId = useBoundStore((state) => state.channelCategoryId);
-	const showCreateChannelDialog = useBoundStore(
-		(state) => state.showCreateChannelDialog
+	const { mutate: updateChannel } = useUpdateChannel();
+	const showEditChannelDialog = useBoundStore(
+		(state) => state.showEditChannelDialog
 	);
-	const setShowCreateChannelDialog = useBoundStore(
-		(state) => state.setShowCreateChannelDialog
+	const setShowEditChannelDialog = useBoundStore(
+		(state) => state.setShowEditChannelDialog
 	);
+	const channelId = useBoundStore((state) => state.channelId);
 	const { serverId } = useParams();
-	const [channelType, setChannelType] = useState<"text" | "voice">("text");
 	const [channelName, setChannelName] = useState<string>("");
 
-	if (!showCreateChannelDialog) return;
+	if (!showEditChannelDialog) return;
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setChannelName(e.target.value);
 	};
 
 	const onConfirm = async () => {
-		const payload: CreateChannelPayload = {
+		const payload = {
 			name: channelName,
-			type: channelType,
 			serverId: parseInt(serverId!),
-			categoryId: channelCategoryId,
+			channelId: channelId!,
 		};
-		createChannel(payload);
-		setShowCreateChannelDialog(false);
-        setChannelName("");
+
+		updateChannel(payload);
+		setShowEditChannelDialog(false);
+		setChannelName("");
 	};
 
 	const onCancel = () => {
-        setChannelName("");
-		setShowCreateChannelDialog(false);
+		setChannelName("");
+		setShowEditChannelDialog(false);
 	};
 
-	const title = <Title>{t("dashboard.createChannel")}</Title>;
+	const title = <Title>{t("dashboard.editChannel")}</Title>;
 	const body = (
 		<Body>
 			<Input
@@ -63,7 +61,7 @@ const CreateChannelDialog = () => {
 		<Actions>
 			<CancelButton onClick={onCancel}>{t("common.cancel")}</CancelButton>
 			<ConfirmButton onClick={onConfirm}>
-				{t("dashboard.createChannel")}
+				{t("dashboard.editChannel")}
 			</ConfirmButton>
 		</Actions>
 	);
@@ -118,12 +116,4 @@ const CancelButton = styled.button`
 	cursor: pointer;
 `;
 
-const ChannelTypeTextOption = styled.div`
-	background-color: ${({ theme }) => theme.colors.gray700};
-`;
-
-const ChannelTypeVoiceOption = styled.div`
-	background-color: ${({ theme }) => theme.colors.gray700};
-`;
-
-export default CreateChannelDialog;
+export default EditChannelDialog;

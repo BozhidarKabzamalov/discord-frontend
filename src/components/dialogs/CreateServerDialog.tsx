@@ -48,7 +48,7 @@ const CreateServerDialog = () => {
 	const body = (
 		<Body>
 			<Input
-				label='Server Name'
+				label={t("dashboard.serverName")}
 				id='serverName'
 				name='serverName'
 				type='text'

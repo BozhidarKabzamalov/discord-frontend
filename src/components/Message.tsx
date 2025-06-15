@@ -1,28 +1,58 @@
 import styled from "styled-components";
 import { Message as MessageType } from "../types/servers";
 import { FaTrash, FaUser } from "react-icons/fa";
+import { useDeleteChannelMessage } from "../services/messageService";
+import { useParams } from "react-router";
+import { useGetServers } from "../services/serverService";
+import { useBoundStore } from "../stores/useBoundStore";
 
 type MessageProps = {
 	message: MessageType;
 };
 
 const Message = ({ message }: MessageProps) => {
-    const { content, user } = message;
+	const { serverId, channelId } = useParams();
+	const { id, content, user } = message;
+	const { mutate: deleteMessage } = useDeleteChannelMessage();
+	const { data: servers } = useGetServers();
+	const server = servers?.find((server) => server.id === parseInt(serverId!));
+	const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
+	const authenticatedUserMembership = server!.members.find((member) => {
+		return member.id === authenticatedUser!.id;
+	});
+
+	const isAuthenticatedUserOwner = authenticatedUserMembership?.roleId === 1;
+	const isAuthenticatedUserAdmin = authenticatedUserMembership?.roleId === 2;
+
+	const isAuthenticatedUserOwnerOrAdmin =
+		isAuthenticatedUserOwner || isAuthenticatedUserAdmin;
+
+	const isAuthenticatedUserMessageCreator = authenticatedUser!.id === user.id;
 
 	return (
 		<Container>
 			<ProfilePicture>
-                <FaUser />
-            </ProfilePicture>
+				<FaUser />
+			</ProfilePicture>
 			<Column>
 				<MessageOwner>{user.username}</MessageOwner>
 				<MessageContent>{content}</MessageContent>
 			</Column>
-			<Actions>
-				<DeleteAction>
-					<FaTrash size="20" />
-				</DeleteAction>
-			</Actions>
+			{(isAuthenticatedUserMessageCreator ||
+				isAuthenticatedUserOwnerOrAdmin) && (
+				<Actions>
+					<DeleteAction
+						onClick={() =>
+							deleteMessage({
+								channelId: parseInt(channelId!),
+								messageId: id,
+							})
+						}
+					>
+						<FaTrash size='20' />
+					</DeleteAction>
+				</Actions>
+			)}
 		</Container>
 	);
 };
@@ -49,9 +79,9 @@ const Container = styled.div`
 `;
 
 const Column = styled.div`
-    display: flex;
-    flex-direction: column;
-`
+	display: flex;
+	flex-direction: column;
+`;
 
 const ProfilePicture = styled.div`
 	display: flex;
@@ -66,8 +96,8 @@ const ProfilePicture = styled.div`
 `;
 
 const MessageOwner = styled.p`
-	color: ${({theme}) => theme.colors.white};
-    margin-bottom: 5px;
+	color: ${({ theme }) => theme.colors.white};
+	margin-bottom: 5px;
 `;
 
 const MessageContent = styled.p`

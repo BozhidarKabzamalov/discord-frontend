@@ -25,13 +25,31 @@ export const useSocket = (channelId: number | undefined) => {
 			);
 		};
 
+        const handleDeletedMessage = (messageId: number) => {
+			queryClient.setQueryData<Message[]>(
+				["channelMessages", channelId],
+				(oldMessages) => {
+					if (!oldMessages) {
+						return [];
+					}
+
+					return oldMessages.filter(
+						(oldMessage) => oldMessage.id != messageId
+					);
+				}
+			);
+		};
+
 		socket.emit("join_channel", channelId);
 
 		socket.on("new_message", handleNewMessage);
 
+        socket.on("deleted_message", handleDeletedMessage);
+
 		return () => {
 			socket.emit("leave_channel", channelId);
 			socket.off("new_message", handleNewMessage);
+            socket.off("deleted_message", handleDeletedMessage);
 		};
 	}, [channelId, queryClient]);
 };

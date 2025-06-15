@@ -4,23 +4,24 @@ import { useState } from "react";
 import Input from "../Input";
 import { useParams } from "react-router";
 import { useBoundStore } from "../../stores/useBoundStore";
-import { useCreateCategory } from "../../services/categoryService";
+import { useUpdateCategory } from "../../services/categoryService";
 import { UpdateCategoryPayload } from "../../types/category";
 import { useTranslation } from "react-i18next";
 
 const EditCategoryDialog = () => {
 	const { t } = useTranslation();
-	const showCreateCategoryDialog = useBoundStore(
-		(state) => state.showCreateCategoryDialog
+	const showEditCategoryDialog = useBoundStore(
+		(state) => state.showEditCategoryDialog
 	);
-	const setShowCreateCategoryDialog = useBoundStore(
-		(state) => state.setShowCreateCategoryDialog
+	const setShowEditCategoryDialog = useBoundStore(
+		(state) => state.setShowEditCategoryDialog
 	);
-	const { serverId, channelId } = useParams();
+    const channelCategoryId = useBoundStore((state) => state.channelCategoryId);
+	const { serverId } = useParams();
 	const [categoryName, setCategoryName] = useState<string>("");
-	const { mutate: updateCategory } = useCreateCategory();
+	const { mutate: updateCategory } = useUpdateCategory();
 
-	if (!showCreateCategoryDialog) return;
+	if (!showEditCategoryDialog) return;
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setCategoryName(e.target.value);
@@ -30,21 +31,23 @@ const EditCategoryDialog = () => {
 		const payload: UpdateCategoryPayload = {
 			name: categoryName,
 			serverId: parseInt(serverId!),
-			categoryId: parseInt(channelId!),
+			categoryId: channelCategoryId!,
 		};
 		updateCategory(payload);
-		setShowCreateCategoryDialog(false);
+        setCategoryName("")
+		setShowEditCategoryDialog(false);
 	};
 
 	const onCancel = () => {
-		setShowCreateCategoryDialog(false);
+        setCategoryName("");
+		setShowEditCategoryDialog(false);
 	};
 
 	const title = <Title>{t("dashboard.editCategory")}</Title>;
 	const body = (
 		<Body>
 			<Input
-				label='Category Name'
+				label={t("dashboard.editCategory")}
 				id='categoryName'
 				name='categoryName'
 				type='text'

@@ -4,9 +4,14 @@
 			"continue": "Продължи",
 			"cancel": "Отмени"
 		},
+		"register": {
+			"createAnAccount": "Създай акаунт",
+			"alreadyHaveAnAccount": "Вече имате акаунт?"
+		},
 		"login": {
 			"needAnAccount": "Нуждаеш се от акаунт?",
-			"welcomeBack": "Добре дошъл отново!"
+			"welcomeBack": "Добре дошъл отново!",
+			"invalidLogin": "Имейла или паролата е невалидна"
 		},
 		"dashboard": {
 			"createServer": "Създай Сървър",
@@ -16,7 +21,12 @@
 			"editCategory": "Редактирай Категория",
 			"editChannel": "Редактирай Канал",
 			"joinServer": "Присъедини се към сървър",
-			"members": "Членове"
+			"members": "Членове",
+			"serverName": "Име на сървър",
+			"categoryName": "Име на категория",
+			"channelName": "Име на канал",
+			"noServerSelected": "Няма избран сървър",
+			"noChannelSelected": "Няма избран канал"
 		}
 	}
 }

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
-import { Server } from "../types/servers";
+import { EditServerPayload, Server } from "../types/servers";
 import { useNavigate } from "react-router";
 
 export const getServers = async () => {
@@ -79,11 +79,36 @@ export const useDeleteServer = () => {
 	});
 };
 
-export const editServer = async (serverId: number, payload: unknown) => {
+export const editServer = async (payload: EditServerPayload) => {
+	const { name, serverId } = payload;
+
 	try {
-		await axiosInstance.put(`/servers/${serverId}`, payload);
+		return await axiosInstance.put(`/servers/${serverId}`, { name });
 	} catch (error) {
 		console.log(error);
 		throw error;
 	}
+};
+
+export const useEditServer = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: editServer,
+		onSuccess: (_data, variables) => {
+            const { name, serverId } = variables;
+
+			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
+				if (!oldServers) {
+					return [];
+				}
+
+				return oldServers.map((server) => {
+                    if (server.id !== serverId) return server;
+
+                    return {...server, name }
+                })
+			});
+		},
+	});
 };

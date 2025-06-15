@@ -12,21 +12,27 @@ const Login = () => {
 	const navigate = useNavigate();
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const { login } = useAuth();
+    const [error, setError] = useState(false);
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 	};
 
 	const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		await login(formData);
-		navigate("/");
+        try {
+            e.preventDefault();
+			await login(formData);
+			navigate("/");
+        } catch {
+            setError(true);
+        }
 	};
 
 	return (
 		<Container>
 			<Form onSubmit={onSubmitHandler}>
 				<Title>{t("login.welcomeBack")}</Title>
+                {error && <Error>{t("login.invalidLogin")}</Error>}
 				<Input
 					label='Email'
 					id='email'
@@ -80,8 +86,17 @@ const Form = styled.form`
 const Title = styled.h2`
 	text-align: center;
 	font-weight: 600;
-	color: #ffffff;
+	color: ${({ theme }) => theme.colors.white};
 	font-size: 24px;
+	line-height: 30px;
+	margin-bottom: 20px;
+`;
+
+const Error = styled.h2`
+	text-align: center;
+	font-weight: 600;
+	color: ${({ theme }) => theme.colors.red100};
+	font-size: 12px;
 	line-height: 30px;
 	margin-bottom: 20px;
 `;
