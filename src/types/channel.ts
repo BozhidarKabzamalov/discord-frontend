@@ -1,17 +1,22 @@
+export enum ChannelType {
+  TEXT = 'TEXT',
+  VOICE = 'VOICE'
+}
+
 export type CreateChannelPayload = {
-	name: string;
-	type: string;
-	serverId: number;
-	categoryId: number | null;
+  name: string;
+  type: ChannelType;
+  serverId: number;
+  categoryId: number | null;
 };
 
 export type DeleteChannelPayload = {
-	serverId: number;
-    channelId: number;
+  serverId: number;
+  channelId: number;
 };
 
 export type UpdateChannelPayload = {
-    name: string;
-	serverId: number;
-	channelId: number;
+  name: string;
+  serverId: number;
+  channelId: number;
 };

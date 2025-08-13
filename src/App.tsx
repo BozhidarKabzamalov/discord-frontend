@@ -9,8 +9,10 @@ import useAuth from "./hooks/useAuth";
 import { useEffect } from "react";
 import { useBoundStore } from "./stores/useBoundStore";
 import SelectedChannel from "./components/SelectedChannel";
+import VoiceChannel from "./components/VoiceChannel";
 import NoSelectedChannel from "./components/NoSelectedChannel";
 import NoSelectedServer from "./components/NoSelectedServer";
+import { ChannelType } from "./types/channel";
 
 const App = () => {
 	const { initializeAuth } = useAuth();
@@ -28,15 +30,18 @@ const App = () => {
 			<Route path='/register' element={<Register />} />
 			<Route element={<ProtectedRoutes />}>
 				<Route path='/' element={<Dashboard />}>
-					<Route
-						path='/'
-						element={<NoSelectedServer />}
-					/>
+					<Route path='/' element={<NoSelectedServer />} />
 					<Route path='channels/:serverId' element={<Server />}>
 						<Route index element={<NoSelectedChannel />} />
 						<Route
-							path=':channelId'
+							path='text/:channelId'
 							element={<SelectedChannel />}
+						/>
+						<Route
+							path='voice/:channelId'
+							element={
+								<></>
+							}
 						/>
 					</Route>
 				</Route>

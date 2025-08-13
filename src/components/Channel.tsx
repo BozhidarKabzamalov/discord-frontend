@@ -29,9 +29,9 @@ const Channel = ({ channel }: ChannelProps) => {
 	const setChannelId = useBoundStore((state) => state.setChannelId);
 
 	const handleChannelClick = () => {
-		if (isTextType) {
-			navigate(`/channels/${serverId}/${id}`);
-		}
+        const url = `/channels/${serverId}/${isTextType ? 'text' : 'voice'}/${id}`;
+
+		navigate(url);
 	};
 
 	const handleOnDelete = (event) => {
