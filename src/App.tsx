@@ -8,11 +8,10 @@ import Server from "./views/Server";
 import useAuth from "./hooks/useAuth";
 import { useEffect } from "react";
 import { useBoundStore } from "./stores/useBoundStore";
-import SelectedChannel from "./components/SelectedChannel";
 import VoiceChannel from "./components/VoiceChannel";
 import NoSelectedChannel from "./components/NoSelectedChannel";
 import NoSelectedServer from "./components/NoSelectedServer";
-import { ChannelType } from "./types/channel";
+import TextChannel from "./components/TextChannel";
 
 const App = () => {
 	const { initializeAuth } = useAuth();
@@ -35,7 +34,7 @@ const App = () => {
 						<Route index element={<NoSelectedChannel />} />
 						<Route
 							path='text/:channelId'
-							element={<SelectedChannel />}
+							element={<TextChannel />}
 						/>
 						<Route
 							path='voice/:channelId'

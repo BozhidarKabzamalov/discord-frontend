@@ -9,12 +9,12 @@ import { useVoiceStore } from "../stores/voiceStore";
 import { useBoundStore } from "../stores/useBoundStore";
 import { useEffect } from "react";
 
-const SelectedChannel = () => {
+const TextChannel = () => {
 	const { serverId, channelId } = useParams();
 	const { data: servers } = useGetServers();
-	const user = useBoundStore(state => state.authenticatedUser);
+	const user = useBoundStore((state) => state.authenticatedUser);
 	const { isConnected, leaveVoiceChannel } = useVoiceStore();
-	
+
 	const server = servers?.find((server) => server.id === parseInt(serverId));
 
 	const channel = server?.categories
@@ -22,7 +22,8 @@ const SelectedChannel = () => {
 		.find((channel) => channel.id === parseInt(channelId));
 
 	const { data: channelMessages } = useGetChannelMessages(channelId);
-    useSocket(channelId);
+    
+	useSocket(channelId);
 
 	useEffect(() => {
 		if (isConnected && user) {
@@ -74,4 +75,4 @@ const ChannelMessagesContainer = styled.div`
     margin-bottom: 10px;
 `;
 
-export default SelectedChannel;
+export default TextChannel;
