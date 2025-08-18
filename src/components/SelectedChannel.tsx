@@ -5,10 +5,16 @@ import Message from "./Message";
 import { useParams } from "react-router";
 import { useGetServers } from "../services/serverService";
 import { useSocket } from "../hooks/useSocket";
+import { useVoiceStore } from "../stores/voiceStore";
+import { useBoundStore } from "../stores/useBoundStore";
+import { useEffect } from "react";
 
 const SelectedChannel = () => {
 	const { serverId, channelId } = useParams();
 	const { data: servers } = useGetServers();
+	const user = useBoundStore(state => state.authenticatedUser);
+	const { isConnected, leaveVoiceChannel } = useVoiceStore();
+	
 	const server = servers?.find((server) => server.id === parseInt(serverId));
 
 	const channel = server?.categories
@@ -17,6 +23,12 @@ const SelectedChannel = () => {
 
 	const { data: channelMessages } = useGetChannelMessages(channelId);
     useSocket(channelId);
+
+	useEffect(() => {
+		if (isConnected && user) {
+			leaveVoiceChannel(user.id, user.username);
+		}
+	}, [channelId, isConnected, leaveVoiceChannel, user]);
 
 	const channelMessagesJsx = channelMessages?.map((channelMessage) => (
 		<Message key={channelMessage.id} message={channelMessage} />

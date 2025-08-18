@@ -24,6 +24,13 @@ const theme = {
 		blue400: "#4654c0",
 
 		red100: "#f57976",
+		red: "#ed4245",
+
+		green: "#3ba55d",
+		greenDark: "#2d7d32",
+		
+		orange: "#faa61a",
+		purple: "#9c84ef",
 	},
 };
 

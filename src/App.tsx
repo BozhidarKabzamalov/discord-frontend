@@ -39,9 +39,7 @@ const App = () => {
 						/>
 						<Route
 							path='voice/:channelId'
-							element={
-								<></>
-							}
+							element={<VoiceChannel />}
 						/>
 					</Route>
 				</Route>
