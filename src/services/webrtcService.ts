@@ -23,7 +23,6 @@ export class WebRTCService {
 
   private setupSocketListeners() {
     this.socket.on('voice_channel_participants', (participants: VoiceParticipant[]) => {
-      console.log('[WEBRTC] Received participants:', participants);
       this.onParticipantsChange?.(participants);
       
       // Create peer connections for existing participants (when we join)
@@ -31,7 +30,6 @@ export class WebRTCService {
         participants.forEach(async (participant) => {
           if (participant.socketId && participant.socketId !== this.socket.id) {
             if (!this.peerConnections.has(participant.socketId)) {
-              console.log('[WEBRTC] Creating peer connection for existing participant:', participant.username);
               await this.createPeerConnection(participant.socketId, true);
             }
           }
@@ -40,45 +38,36 @@ export class WebRTCService {
     });
 
     this.socket.on('user_joined_voice', async ({ userId, username, socketId }: VoiceParticipant & { socketId: string }) => {
-      console.log('[WEBRTC] User joined voice:', { userId, username, socketId });
-      
       // Only create peer connection if we have local stream and it's not ourselves
       if (this.localStream && socketId !== this.socket.id) {
         if (!this.peerConnections.has(socketId)) {
-          console.log('[WEBRTC] Creating peer connection for new participant:', username);
           await this.createPeerConnection(socketId, true);
         }
       }
     });
 
     this.socket.on('user_left_voice', ({ socketId }: { socketId: string }) => {
-      console.log('[WEBRTC] User left voice:', socketId);
       this.closePeerConnection(socketId);
     });
 
     this.socket.on('webrtc_offer', async ({ offer, senderSocketId, channelId }) => {
-      console.log(`[WEBRTC] Received offer from ${senderSocketId} for channel ${channelId}`);
       if (channelId === this.currentChannelId) {
         await this.handleOffer(offer, senderSocketId);
       }
     });
 
     this.socket.on('webrtc_answer', async ({ answer, senderSocketId }) => {
-      console.log(`[WEBRTC] Received answer from ${senderSocketId}`);
       const peerConnection = this.peerConnections.get(senderSocketId);
       if (peerConnection) {
         await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-        console.log(`[WEBRTC] Set remote description for ${senderSocketId}`);
       }
     });
 
     this.socket.on('webrtc_ice_candidate', async ({ candidate, senderSocketId }) => {
-      console.log(`[WEBRTC] Received ICE candidate from ${senderSocketId}`);
       const peerConnection = this.peerConnections.get(senderSocketId);
       if (peerConnection && candidate) {
         try {
           await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-          console.log(`[WEBRTC] Added ICE candidate for ${senderSocketId}`);
         } catch (error) {
           console.error(`[WEBRTC] Error adding ICE candidate for ${senderSocketId}:`, error);
         }
@@ -86,7 +75,6 @@ export class WebRTCService {
     });
 
     this.socket.on('user_video_state_changed', ({ socketId, hasVideo }) => {
-      console.log(`[WEBRTC] User ${socketId} changed video state to: ${hasVideo}`);
       // The participant list will be updated automatically, 
       // and the UI will reflect the video state change
     });
@@ -137,9 +125,11 @@ export class WebRTCService {
         this.closePeerConnection(socketId);
       }
 
-      // Stop local stream
+      // Stop local stream tracks
       if (this.localStream) {
-        this.localStream.getTracks().forEach(track => track.stop());
+        this.localStream.getTracks().forEach(track => {
+          track.stop();
+        });
         this.localStream = null;
       }
 
@@ -435,6 +425,8 @@ export class WebRTCService {
     return null;
   }
 
+
+
   cleanup() {
     // Close all peer connections
     for (const [socketId] of this.peerConnections) {
@@ -443,9 +435,37 @@ export class WebRTCService {
 
     // Stop local stream
     if (this.localStream) {
-      this.localStream.getTracks().forEach(track => track.stop());
+      this.localStream.getTracks().forEach(track => {
+        track.stop();
+      });
       this.localStream = null;
     }
+
+    // Clear all audio elements
+    const audioElements = document.querySelectorAll('audio[id^="audio-"]');
+    audioElements.forEach(audio => {
+      if (audio.srcObject) {
+        const stream = audio.srcObject as MediaStream;
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+        audio.srcObject = null;
+      }
+      audio.remove();
+    });
+
+    // Clear all video elements that might have been created
+    const videoElements = document.querySelectorAll('video[id^="video-"]');
+    videoElements.forEach(video => {
+      if (video.srcObject) {
+        const stream = video.srcObject as MediaStream;
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+        video.srcObject = null;
+      }
+      video.remove();
+    });
 
     this.currentChannelId = null;
   }

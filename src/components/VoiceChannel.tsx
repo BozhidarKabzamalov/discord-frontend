@@ -1,105 +1,64 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import styled from "styled-components";
-import {
-	FaMicrophone,
-	FaMicrophoneSlash,
-	FaVolumeUp,
-	FaVolumeOff,
-	FaPhoneSlash,
-	FaVideo,
-	FaVideoSlash,
-} from "react-icons/fa";
 import { useVoiceStore } from "../stores/voiceStore";
 import { useBoundStore } from "../stores/useBoundStore";
-
-// Generate a consistent color based on username
-const getUserColor = (username: string): string => {
-	const colors = [
-		"#3ba55d", // green
-		"#5865f2", // blue
-		"#ed4245", // red
-		"#f57976", // light red
-		"#8da1fc", // light blue
-		"#faa61a", // orange
-		"#9c84ef", // purple
-		"#57f287", // light green
-	];
-
-	let hash = 0;
-	for (let i = 0; i < username.length; i++) {
-		hash = username.charCodeAt(i) + ((hash << 5) - hash);
-	}
-
-	return colors[Math.abs(hash) % colors.length];
-};
+import { useGetServers } from "../services/serverService";
+import MediaControls from "./MediaControls";
 
 const VoiceChannel: React.FC = () => {
-	const { channelId } = useParams();
+	const { channelId, serverId } = useParams();
+	const { data: servers } = useGetServers();
+	const navigate = useNavigate();
 	const user = useBoundStore((state) => state.authenticatedUser);
 	const [isJoining, setIsJoining] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+
+	const server = servers?.find((server) => server.id === parseInt(serverId));
+
+	const channel = server?.categories
+		.flatMap((category) => category.channels || [])
+		.find((channel) => channel.id === parseInt(channelId));
 
 	const {
 		currentVoiceChannelId,
 		participants,
 		isConnected,
-		isMuted,
-		isDeafened,
-		hasVideo,
 		remoteStreams,
 		webrtcService,
 		joinVoiceChannel,
 		leaveVoiceChannel,
-		toggleMute,
-		toggleDeafen,
-		toggleVideo,
 	} = useVoiceStore();
 
-	const isInThisChannel = currentVoiceChannelId === parseInt(channelId!);
-
-	const handleJoinVoice = async () => {
-		if (!user || !channelId) return;
-
-		setIsJoining(true);
-		setError(null);
-
-		try {
-			await joinVoiceChannel(
-				parseInt(channelId),
-				user.id,
-				user.username,
-				false
-			);
-		} catch (err) {
-			setError(
-				"Failed to join voice channel. Please check your microphone permissions."
-			);
-			console.error("Voice channel join error:", err);
-		} finally {
-			setIsJoining(false);
-		}
-	};
-
 	const handleLeaveVoice = useCallback(async () => {
-		if (!user) return;
+		if (!user || !serverId) return;
 
 		try {
 			await leaveVoiceChannel(user.id, user.username);
+			navigate(`/channels/${serverId}`);
 		} catch (err) {
 			console.error("Voice channel leave error:", err);
 		}
-	}, [leaveVoiceChannel, user]);
+	}, [leaveVoiceChannel, user, serverId, navigate]);
 
-	const handleToggleVideo = async () => {
-		try {
-			await toggleVideo();
-		} catch (err) {
-			setError(
-				"Failed to toggle video. Please check your camera permissions."
-			);
-			console.error("Video toggle error:", err);
+	const getUserColor = (username: string): string => {
+		const colors = [
+			"#3ba55d", // green
+			"#5865f2", // blue
+			"#ed4245", // red
+			"#f57976", // light red
+			"#8da1fc", // light blue
+			"#faa61a", // orange
+			"#9c84ef", // purple
+			"#57f287", // light green
+		];
+
+		let hash = 0;
+		for (let i = 0; i < username.length; i++) {
+			hash = username.charCodeAt(i) + ((hash << 5) - hash);
 		}
+
+		return colors[Math.abs(hash) % colors.length];
 	};
 
 	// Auto-join voice channel when component mounts
@@ -140,7 +99,6 @@ const VoiceChannel: React.FC = () => {
 		joinVoiceChannel,
 	]);
 
-	// Auto-leave when navigating away from voice channel
 	useEffect(() => {
 		return () => {
 			if (
@@ -155,10 +113,7 @@ const VoiceChannel: React.FC = () => {
 
 	return (
 		<Container>
-			<Header>
-				<Title>Voice Channel</Title>
-				{error && <ErrorMessage>{error}</ErrorMessage>}
-			</Header>
+			<ChannelName>{channel?.name}</ChannelName>
 
 			<Content>
 				{isJoining ? (
@@ -171,9 +126,6 @@ const VoiceChannel: React.FC = () => {
 				) : (
 					<VoiceSection>
 						<ParticipantsSection>
-							<ParticipantsTitle>
-								Voice Channel ({participants.length})
-							</ParticipantsTitle>
 							<ParticipantsGrid>
 								{participants.map((participant) => {
 									const isCurrentUser =
@@ -224,11 +176,6 @@ const VoiceChannel: React.FC = () => {
 																participant.username
 															}
 														</ParticipantName>
-														{isCurrentUser && (
-															<YouLabel>
-																(You)
-															</YouLabel>
-														)}
 													</VideoOverlay>
 												</VideoContainer>
 											) : (
@@ -248,11 +195,6 @@ const VoiceChannel: React.FC = () => {
 																participant.username
 															}
 														</ParticipantName>
-														{isCurrentUser && (
-															<YouLabel>
-																(You)
-															</YouLabel>
-														)}
 													</ParticipantInfo>
 												</>
 											)}
@@ -261,51 +203,7 @@ const VoiceChannel: React.FC = () => {
 								})}
 							</ParticipantsGrid>
 						</ParticipantsSection>
-
-						<ControlsSection>
-							<ControlButton
-								onClick={toggleMute}
-								$active={!isMuted}
-								$danger={isMuted}
-								title={isMuted ? "Unmute" : "Mute"}
-							>
-								{isMuted ? (
-									<FaMicrophoneSlash />
-								) : (
-									<FaMicrophone />
-								)}
-							</ControlButton>
-
-							<ControlButton
-								onClick={handleToggleVideo}
-								$active={hasVideo}
-								$danger={!hasVideo}
-								title={
-									hasVideo
-										? "Turn off camera"
-										: "Turn on camera"
-								}
-							>
-								{hasVideo ? <FaVideo /> : <FaVideoSlash />}
-							</ControlButton>
-
-							<ControlButton
-								onClick={toggleDeafen}
-								$active={!isDeafened}
-								$danger={isDeafened}
-								title={isDeafened ? "Undeafen" : "Deafen"}
-							>
-								{isDeafened ? <FaVolumeOff /> : <FaVolumeUp />}
-							</ControlButton>
-
-							<ControlButton
-								onClick={handleLeaveVoice}
-								$danger={true}
-								title='Leave Voice Channel'
-							>
-								<FaPhoneSlash />
-							</ControlButton>
-						</ControlsSection>
+                        <MediaControls />
 					</VoiceSection>
 				)}
 			</Content>
@@ -321,21 +219,10 @@ const Container = styled.div`
 	background-color: ${({ theme }) => theme.colors.gray800};
 `;
 
-const Header = styled.div`
-	padding: 20px;
-	border-bottom: 1px solid ${({ theme }) => theme.colors.gray700};
-`;
-
-const Title = styled.h2`
-	color: ${({ theme }) => theme.colors.white};
-	margin: 0 0 10px 0;
-	font-size: 24px;
-`;
-
-const ErrorMessage = styled.div`
-	color: ${({ theme }) => theme.colors.red};
-	font-size: 14px;
-	margin-top: 10px;
+const ChannelName = styled.p`
+	color: ${({ theme }) => theme.colors.gray100};
+	padding: 15px;
+	border-bottom: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
 `;
 
 const Content = styled.div`
@@ -388,12 +275,6 @@ const ParticipantsSection = styled.div`
 	background-color: ${({ theme }) => theme.colors.gray700};
 	border-radius: 8px;
 	padding: 20px;
-`;
-
-const ParticipantsTitle = styled.h3`
-	color: ${({ theme }) => theme.colors.white};
-	margin: 0 0 15px 0;
-	font-size: 18px;
 `;
 
 const ParticipantsGrid = styled.div`
@@ -489,12 +370,6 @@ const ParticipantName = styled.div`
 	margin-bottom: 4px;
 `;
 
-const YouLabel = styled.div`
-	color: ${({ theme }) => theme.colors.gray300};
-	font-size: 12px;
-	font-style: italic;
-`;
-
 const VideoContainer = styled.div`
 	position: relative;
 	width: 100%;
@@ -519,42 +394,6 @@ const VideoOverlay = styled.div`
 	background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
 	padding: 15px 10px 10px;
 	text-align: center;
-`;
-
-const ControlsSection = styled.div`
-	display: flex;
-	justify-content: center;
-	gap: 15px;
-`;
-
-const ControlButton = styled.button<{ $active?: boolean; $danger?: boolean }>`
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-	border: none;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 18px;
-	cursor: pointer;
-	transition: all 0.2s;
-
-	background-color: ${({ theme, $active, $danger }) => {
-		if ($danger) return theme.colors.red;
-		if ($active) return theme.colors.green;
-		return theme.colors.gray600;
-	}};
-
-	color: white;
-
-	&:hover {
-		transform: scale(1.1);
-		opacity: 0.9;
-	}
-
-	&:active {
-		transform: scale(0.95);
-	}
 `;
 
 export default VoiceChannel;
