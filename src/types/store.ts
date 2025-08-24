@@ -1,4 +1,5 @@
 import { AuthenticatedUser } from "./auth";
+import { ThemeSliceType } from "../stores/themeSlice";
 
 export type AuthSliceType = {
 	authenticatedUser: AuthenticatedUser | null;
@@ -28,4 +29,4 @@ export type DialogSliceType = {
 	setShowEditChannelDialog: (payload: boolean) => void;
 };
 
-export type StoreType = AuthSliceType & DialogSliceType;
+export type StoreType = AuthSliceType & DialogSliceType & ThemeSliceType;

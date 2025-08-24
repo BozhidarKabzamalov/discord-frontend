@@ -127,11 +127,11 @@ const ServerNameContainer = styled.div`
 	flex-direction: row;
 	align-items: center;
 	padding: 15px 25px;
-	color: ${({ theme }) => theme.colors.gray200};
+	color: ${({ theme }) => theme.colors.textColor};
 	border-bottom: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
 
 	&:hover {
-		color: ${({ theme }) => theme.colors.white};
+		color: ${({ theme }) => theme.colors.textColorHover};
 		background-color: ${({ theme }) => theme.colors.gray1000};
 	}
 `;
@@ -149,10 +149,10 @@ const ChannelTypeTitleContainer = styled.div`
 	flex: 1;
 	padding: 10px;
 	border-radius: 5px;
-	color: ${({ theme }) => theme.colors.gray200};
+	color: ${({ theme }) => theme.colors.textColor};
 
 	&:hover {
-		color: ${({ theme }) => theme.colors.white};
+		color: ${({ theme }) => theme.colors.textColorHover};
 		background-color: ${({ theme }) => theme.colors.gray1000};
 	}
 `;

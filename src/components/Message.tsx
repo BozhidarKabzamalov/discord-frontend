@@ -96,7 +96,7 @@ const ProfilePicture = styled.div`
 `;
 
 const MessageOwner = styled.p`
-	color: ${({ theme }) => theme.colors.white};
+	color: ${({ theme }) => theme.colors.gray100};
 	margin-bottom: 5px;
 `;
 

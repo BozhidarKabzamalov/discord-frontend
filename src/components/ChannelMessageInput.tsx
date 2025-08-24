@@ -33,10 +33,10 @@ const ServerMessageInput = () => {
 
 const StyledMessageInput = styled.input`
 	width: 100%;
-	border-radius: 8px 0 0 8px;
+	border-radius: 8px;
 	background-color: ${({ theme }) => theme.colors.gray600};
-	border: none;
-	color: #ffffff;
+	border: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
+	color: ${({ theme }) => theme.colors.textColor};
 	outline: none;
 	padding: 20px;
 `;

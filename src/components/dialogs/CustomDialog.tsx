@@ -39,10 +39,10 @@ const Container = styled.div`
 `;
 
 const InnerContainer = styled.div`
-	background-color: ${({ theme }) => theme.colors.gray600};
+	background-color: ${({ theme }) => theme.colors.innerDialog};
 	border-radius: 10px;
 	width: 500px;
-    padding: 20px;
+	padding: 20px;
 `;
 
 const TitleContainer = styled.div``;

@@ -67,11 +67,11 @@ const Container = styled.div`
 	margin-bottom: 15px;
 	padding: 10px;
 	border-radius: 5px;
-	color: ${({ theme }) => theme.colors.gray200};
+	color: ${({ theme }) => theme.colors.textColor};
 	cursor: pointer;
 
 	&:hover {
-		color: ${({ theme }) => theme.colors.white};
+		color: ${({ theme }) => theme.colors.textColorHover};
 		background-color: ${({ theme }) => theme.colors.gray1000};
 	}
 

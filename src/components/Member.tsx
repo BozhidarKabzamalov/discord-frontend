@@ -112,13 +112,12 @@ const ProfilePicture = styled.div`
 	width: 40px;
 	height: 40px;
 	border-radius: 50%;
-	color: ${({ theme }) => theme.colors.gray1300};
-	background-color: ${({ theme }) => theme.colors.gray1400};
+	color: ${({ theme }) => theme.colors.white};
+	background-color: ${({ theme }) => theme.colors.memberProfileBackground};
 	margin-right: 15px;
 `;
 
 const Username = styled.p`
-	color: ${({ theme }) => theme.colors.gray200};
 	margin-right: 15px;
 `;
 
@@ -128,19 +127,14 @@ const Container = styled.div`
 	margin-bottom: 10px;
 	padding: 5px;
 	border-radius: 5px;
-	color: ${({ theme }) => theme.colors.gray200};
+	color: ${({ theme }) => theme.colors.textColor};
 
 	&:hover {
-		color: ${({ theme }) => theme.colors.white};
+		color: ${({ theme }) => theme.colors.textColorHover};
 		background-color: ${({ theme }) => theme.colors.gray1200};
 
-		${ProfilePicture} {
-			color: ${({ theme }) => theme.colors.white};
-			background-color: ${({ theme }) => theme.colors.gray500};
-		}
-
 		${Username} {
-			color: ${({ theme }) => theme.colors.white};
+			color: ${({ theme }) => theme.colors.textColorHover};
 		}
 	}
 `;

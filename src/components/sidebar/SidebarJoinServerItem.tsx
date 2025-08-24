@@ -24,7 +24,7 @@ const Container = styled.div`
 	width: 40px;
 	height: 40px;
 	border-radius: 10px;
-	background-color: ${({ theme }) => theme.colors.gray800};
+	background-color: ${({ theme }) => theme.colors.gray1000};
 	color: ${({ theme }) => theme.colors.gray100};
 	cursor: pointer;
 

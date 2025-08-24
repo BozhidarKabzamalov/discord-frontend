@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router";
+import { useEffect } from "react";
 
 import Login from "./views/Login";
 import Register from "./views/Register";
@@ -6,7 +7,6 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import Dashboard from "./views/Dashboard";
 import Server from "./views/Server";
 import useAuth from "./hooks/useAuth";
-import { useEffect } from "react";
 import { useBoundStore } from "./stores/useBoundStore";
 import VoiceChannel from "./components/VoiceChannel";
 import NoSelectedChannel from "./components/NoSelectedChannel";
