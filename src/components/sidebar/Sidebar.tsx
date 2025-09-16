@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useGetServers } from "../../services/serverService";
 import SidebarServerItem from "./SidebarServerItem";
+import SidebarDMItem from "./SidebarDMItem";
 import SidebarCreateServerItem from "./SidebarCreateServerItem";
 import SidebarJoinServerItem from "./SidebarJoinServerItem";
 import SidebarLanguageSwitcherItem from "./SidebarLanguageSwitcherItem";
@@ -12,6 +13,7 @@ const Sidebar = () => {
 
 	return (
 		<StyledSidebar>
+			<SidebarDMItem />
 			{servers &&
 				servers.map((server) => (
 					<SidebarServerItem key={server.id} server={server} />
