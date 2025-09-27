@@ -5,10 +5,10 @@ import { FaUser } from "react-icons/fa";
 import {
 	useGetConversation,
 	useSendDirectMessage,
-	DirectMessage,
 } from "../services/directMessageService";
 import { useGetFriends } from "../services/friendService";
 import { useBoundStore } from "../stores/useBoundStore";
+import { useDMSocket } from "../hooks/useDMSocket";
 
 const DirectMessages: React.FC = () => {
 	const { userId } = useParams();
@@ -25,6 +25,7 @@ const DirectMessages: React.FC = () => {
 	const messages = conversationData?.messages || [];
 
 	// Use DM socket hook for real-time updates
+	useDMSocket();
 
 	useEffect(() => {
 		scrollToBottom();
@@ -114,7 +115,6 @@ const DirectMessages: React.FC = () => {
 					value={messageInput}
 					onChange={(e) => setMessageInput(e.target.value)}
 					onKeyDown={handleKeyDown}
-					disabled={sendMessage.isPending}
 				/>
 			</MessagesAndInputContainer>
 		</Container>
