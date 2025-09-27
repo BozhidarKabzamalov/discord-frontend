@@ -9,13 +9,11 @@ import {
 } from "../services/directMessageService";
 import { useGetFriends } from "../services/friendService";
 import { useBoundStore } from "../stores/useBoundStore";
-import { socket } from "../socket";
 
 const DirectMessages: React.FC = () => {
 	const { userId } = useParams();
 	const currentUser = useBoundStore((state) => state.authenticatedUser);
 	const [messageInput, setMessageInput] = useState("");
-	const [messages, setMessages] = useState<DirectMessage[]>([]);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 
 	const friendId = parseInt(userId || "0");
@@ -24,37 +22,9 @@ const DirectMessages: React.FC = () => {
 	const sendMessage = useSendDirectMessage();
 
 	const friend = friendsData?.friends.find((f) => f.id === friendId);
+	const messages = conversationData?.messages || [];
 
-	useEffect(() => {
-		if (conversationData?.messages) {
-			setMessages(conversationData.messages);
-		}
-	}, [conversationData]);
-
-	useEffect(() => {
-		if (!socket.connected) {
-			socket.connect();
-		}
-
-		const handleNewMessage = (data: { directMessage: DirectMessage }) => {
-			const message = data.directMessage;
-
-			if (
-				(message.senderId === friendId &&
-					message.receiverId === currentUser?.id) ||
-				(message.receiverId === friendId &&
-					message.senderId === currentUser?.id)
-			) {
-				setMessages((prev) => [...prev, message]);
-			}
-		};
-
-		socket.on("new_direct_message", handleNewMessage);
-
-		return () => {
-			socket.off("new_direct_message", handleNewMessage);
-		};
-	}, [friendId, currentUser?.id]);
+	// Use DM socket hook for real-time updates
 
 	useEffect(() => {
 		scrollToBottom();
@@ -64,8 +34,14 @@ const DirectMessages: React.FC = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	};
 
-	const handleSendMessage = async (e: React.FormEvent) => {
-		e.preventDefault();
+	const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === "Enter") {
+			event.preventDefault();
+			onSubmit();
+		}
+	};
+
+	const onSubmit = async () => {
 		if (!messageInput.trim() || !friendId || !currentUser) return;
 
 		const messageData = {
@@ -74,29 +50,10 @@ const DirectMessages: React.FC = () => {
 		};
 
 		try {
-			const response = await sendMessage.mutateAsync(messageData);
-			setMessages((prev) => [...prev, response.directMessage]);
+			await sendMessage.mutateAsync(messageData);
 			setMessageInput("");
 		} catch (error) {
 			console.error("Failed to send message:", error);
-		}
-	};
-
-	const formatMessageTime = (dateString: string) => {
-		const date = new Date(dateString);
-		const now = new Date();
-		const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-
-		if (diffInHours < 24) {
-			return date.toLocaleTimeString([], {
-				hour: "2-digit",
-				minute: "2-digit",
-			});
-		} else {
-			return date.toLocaleDateString([], {
-				month: "short",
-				day: "numeric",
-			});
 		}
 	};
 
@@ -127,83 +84,39 @@ const DirectMessages: React.FC = () => {
 	return (
 		<Container>
 			<FriendName>{friend?.username || "Unknown User"}</FriendName>
-
-			<MessagesContainer>
-				<MessagesList>
-					{messages.map((message, index) => {
+			<MessagesAndInputContainer>
+				<MessagesContainer>
+					{messages.map((message) => {
 						const isOwnMessage =
 							message.senderId === currentUser?.id;
-						const showAvatar =
-							index === 0 ||
-							messages[index - 1].senderId !== message.senderId;
-						const showTimestamp =
-							index === messages.length - 1 ||
-							messages[index + 1].senderId !== message.senderId ||
-							new Date(messages[index + 1].createdAt).getTime() -
-								new Date(message.createdAt).getTime() >
-								300000; // 5 minutes
-
-                            console.log(message);
-
 						return (
-							<MessageGroup
-								key={message.id}
-								$isOwn={isOwnMessage}
-							>
-								{showAvatar && (
-									<MessageAvatar $isOwn={isOwnMessage}>
-										<FaUser />
-									</MessageAvatar>
-								)}
-								<MessageContent
-									$isOwn={isOwnMessage}
-									$hasAvatar={showAvatar}
-								>
-									{showAvatar && (
-										<MessageHeader>
-											<MessageAuthor
-												$isOwn={isOwnMessage}
-											>
-												{isOwnMessage
-													? "You"
-													: message.sender.username}
-											</MessageAuthor>
-											<MessageTime>
-												{formatMessageTime(
-													message.createdAt
-												)}
-											</MessageTime>
-										</MessageHeader>
-									)}
-									<MessageText $isOwn={isOwnMessage}>
+							<MessageContainer key={message.id}>
+								<ProfilePicture>
+									<FaUser />
+								</ProfilePicture>
+								<Column>
+									<MessageOwner>
+										{isOwnMessage
+											? "You"
+											: message.sender.username}
+									</MessageOwner>
+									<MessageContent>
 										{message.content}
-									</MessageText>
-									{showTimestamp && !showAvatar && (
-										<MessageTime>
-											{formatMessageTime(
-												message.createdAt
-											)}
-										</MessageTime>
-									)}
-								</MessageContent>
-							</MessageGroup>
+									</MessageContent>
+								</Column>
+							</MessageContainer>
 						);
 					})}
 					<div ref={messagesEndRef} />
-				</MessagesList>
-			</MessagesContainer>
-
-			<MessageInputContainer>
-				<MessageInputForm onSubmit={handleSendMessage}>
-					<MessageInput
-						type='text'
-						placeholder={`Message ${friend?.username || "user"}`}
-						value={messageInput}
-						onChange={(e) => setMessageInput(e.target.value)}
-						disabled={sendMessage.isPending}
-					/>
-				</MessageInputForm>
-			</MessageInputContainer>
+				</MessagesContainer>
+				<MessageInput
+					placeholder={`Message ${friend?.username || "user"}`}
+					value={messageInput}
+					onChange={(e) => setMessageInput(e.target.value)}
+					onKeyDown={handleKeyDown}
+					disabled={sendMessage.isPending}
+				/>
+			</MessagesAndInputContainer>
 		</Container>
 	);
 };
@@ -212,8 +125,7 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	flex: 1;
-	height: 100%;
-	background-color: ${({ theme }) => theme.colors.gray800};
+	background-color: ${({ theme }) => theme.colors.gray1100};
 `;
 
 const FriendName = styled.p`
@@ -222,110 +134,67 @@ const FriendName = styled.p`
 	border-bottom: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
 `;
 
-const MessagesContainer = styled.div`
-	flex: 1;
-	overflow: hidden;
-`;
-
-const MessagesList = styled.div`
-	height: 100%;
-	overflow-y: auto;
-	padding: 20px;
+const MessagesAndInputContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	flex: 1;
+	padding: 15px;
 `;
 
-const MessageGroup = styled.div<{ $isOwn: boolean }>`
+const MessagesContainer = styled.div`
 	display: flex;
-	align-items: flex-start;
-	gap: 15px;
-	margin-bottom: 5px;
-	flex-direction: ${({ $isOwn }) => ($isOwn ? "row-reverse" : "row")};
+	flex-direction: column;
+	justify-content: flex-end;
+	flex: 1;
+	margin-bottom: 10px;
+	overflow-y: auto;
 `;
 
-const MessageAvatar = styled.div<{ $isOwn: boolean }>`
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
-	background-color: ${({ theme, $isOwn }) =>
-		$isOwn ? theme.colors.blue200 : theme.colors.gray600};
+const MessageContainer = styled.div`
 	display: flex;
 	align-items: center;
+	padding: 10px;
+	border-radius: 5px;
+
+	&:hover {
+		background-color: ${({ theme }) => theme.colors.gray1200};
+	}
+`;
+
+const Column = styled.div`
+	display: flex;
+	flex-direction: column;
+`;
+
+const ProfilePicture = styled.div`
+	display: flex;
 	justify-content: center;
-	color: white;
-	font-size: 14px;
-	flex-shrink: 0;
-	margin-top: 2px;
-`;
-
-const MessageContent = styled.div<{ $isOwn: boolean; $hasAvatar: boolean }>`
-	max-width: 70%;
-	margin-left: ${({ $hasAvatar, $isOwn }) =>
-		!$hasAvatar && !$isOwn ? "47px" : "0"};
-	margin-right: ${({ $hasAvatar, $isOwn }) =>
-		!$hasAvatar && $isOwn ? "47px" : "0"};
-`;
-
-const MessageHeader = styled.div`
-	display: flex;
 	align-items: center;
-	gap: 10px;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	color: ${({ theme }) => theme.colors.white};
+	background-color: ${({ theme }) => theme.colors.gray1400};
+	margin-right: 15px;
+`;
+
+const MessageOwner = styled.p`
+	color: ${({ theme }) => theme.colors.gray100};
 	margin-bottom: 5px;
 `;
 
-const MessageAuthor = styled.span<{ $isOwn: boolean }>`
-	color: ${({ theme, $isOwn }) =>
-		$isOwn ? theme.colors.blue200 : theme.colors.white};
-	font-weight: 600;
-	font-size: 14px;
-`;
-
-const MessageTime = styled.span`
-	color: ${({ theme }) => theme.colors.gray400};
-	font-size: 12px;
-`;
-
-const MessageText = styled.div<{ $isOwn: boolean }>`
-	background-color: ${({ theme, $isOwn }) =>
-		$isOwn ? theme.colors.blue200 : theme.colors.gray700};
-	color: ${({ theme }) => theme.colors.white};
-	padding: 10px 15px;
-	border-radius: 18px;
-	word-wrap: break-word;
-	line-height: 1.4;
-	font-size: 15px;
-`;
-
-const MessageInputContainer = styled.div`
-	padding: 20px;
-	background-color: ${({ theme }) => theme.colors.gray800};
-	border-top: 1px solid ${({ theme }) => theme.colors.gray700};
-`;
-
-const MessageInputForm = styled.form`
-	display: flex;
-	gap: 10px;
-	align-items: center;
+const MessageContent = styled.p`
+	color: ${({ theme }) => theme.colors.gray100};
 `;
 
 const MessageInput = styled.input`
-	flex: 1;
-	padding: 12px 16px;
-	background-color: ${({ theme }) => theme.colors.gray700};
-	border: 1px solid ${({ theme }) => theme.colors.gray600};
-	border-radius: 25px;
-	color: ${({ theme }) => theme.colors.white};
-	font-size: 15px;
-
-	&:focus {
-		outline: none;
-		border-color: ${({ theme }) => theme.colors.blue200};
-	}
-
-	&::placeholder {
-		color: ${({ theme }) => theme.colors.gray400};
-	}
+	width: 100%;
+	border-radius: 8px;
+	background-color: ${({ theme }) => theme.colors.gray600};
+	border: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
+	color: ${({ theme }) => theme.colors.textColor};
+	outline: none;
+	padding: 20px;
 `;
 
 const EmptyState = styled.div`
