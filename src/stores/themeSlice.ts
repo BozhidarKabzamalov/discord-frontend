@@ -6,7 +6,7 @@ export type ThemeSliceType = {
 };
 
 const createThemeSlice: StateCreator<ThemeSliceType> = (set) => ({
-	theme: "dark",
+	theme: "light",
 	toggleTheme: () =>
 		set((state) => {
 			const newTheme = state.theme === "dark" ? "light" : "dark";

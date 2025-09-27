@@ -25,6 +25,9 @@
 			"serverName": "Име на сървър",
 			"categoryName": "Име на категория",
 			"channelName": "Име на канал",
+			"channelType": "Тип канал",
+			"textChannel": "Текстов канал",
+			"voiceChannel": "Гласов канал",
 			"noServerSelected": "Няма избран сървър",
 			"noChannelSelected": "Няма избран канал"
 		}

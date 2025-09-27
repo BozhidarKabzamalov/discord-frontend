@@ -5,7 +5,7 @@ import Input from "../Input";
 import { useParams } from "react-router";
 import { useBoundStore } from "../../stores/useBoundStore";
 import { useCreateChannel } from "../../services/channelService";
-import { CreateChannelPayload } from "../../types/channel";
+import { CreateChannelPayload, ChannelType } from "../../types/channel";
 import { useTranslation } from "react-i18next";
 
 const CreateChannelDialog = () => {
@@ -19,7 +19,9 @@ const CreateChannelDialog = () => {
 		(state) => state.setShowCreateChannelDialog
 	);
 	const { serverId } = useParams();
-	const [channelType, setChannelType] = useState<"text" | "voice">("text");
+	const [channelType, setChannelType] = useState<ChannelType>(
+		ChannelType.TEXT
+	);
 	const [channelName, setChannelName] = useState<string>("");
 
 	if (!showCreateChannelDialog) return;
@@ -37,17 +39,42 @@ const CreateChannelDialog = () => {
 		};
 		createChannel(payload);
 		setShowCreateChannelDialog(false);
-        setChannelName("");
+		setChannelName("");
 	};
 
 	const onCancel = () => {
-        setChannelName("");
+		setChannelName("");
 		setShowCreateChannelDialog(false);
 	};
 
 	const title = <Title>{t("dashboard.createChannel")}</Title>;
 	const body = (
 		<Body>
+			<ChannelTypeSelector>
+				<ChannelTypeLabel>
+					{t("dashboard.channelType")}
+				</ChannelTypeLabel>
+				<ChannelTypeOptions>
+					<ChannelTypeOption
+						$isSelected={channelType === ChannelType.TEXT}
+						onClick={() => setChannelType(ChannelType.TEXT)}
+					>
+						<ChannelTypeIcon>#</ChannelTypeIcon>
+						<ChannelTypeText>
+							{t("dashboard.textChannel")}
+						</ChannelTypeText>
+					</ChannelTypeOption>
+					<ChannelTypeOption
+						$isSelected={channelType === ChannelType.VOICE}
+						onClick={() => setChannelType(ChannelType.VOICE)}
+					>
+						<ChannelTypeIcon>🔊</ChannelTypeIcon>
+						<ChannelTypeText>
+							{t("dashboard.voiceChannel")}
+						</ChannelTypeText>
+					</ChannelTypeOption>
+				</ChannelTypeOptions>
+			</ChannelTypeSelector>
 			<Input
 				label={t("dashboard.channelName")}
 				id='channelName'
@@ -118,12 +145,52 @@ const CancelButton = styled.button`
 	cursor: pointer;
 `;
 
-const ChannelTypeTextOption = styled.div`
-	background-color: ${({ theme }) => theme.colors.gray700};
+const ChannelTypeSelector = styled.div`
+	margin-bottom: 20px;
 `;
 
-const ChannelTypeVoiceOption = styled.div`
-	background-color: ${({ theme }) => theme.colors.gray700};
+const ChannelTypeLabel = styled.label`
+	display: block;
+	color: ${({ theme }) => theme.colors.gray100};
+	font-size: 14px;
+	font-weight: 500;
+	margin-bottom: 8px;
+`;
+
+const ChannelTypeOptions = styled.div`
+	display: flex;
+	gap: 12px;
+`;
+
+const ChannelTypeOption = styled.div<{ $isSelected: boolean }>`
+	display: flex;
+	align-items: center;
+	padding: 12px 16px;
+	border-radius: 8px;
+	cursor: pointer;
+	border: 2px solid
+		${({ theme, $isSelected }) =>
+			$isSelected ? theme.colors.blue200 : theme.colors.gray600};
+	background-color: ${({ theme, $isSelected }) =>
+		$isSelected ? theme.colors.blue200 + "20" : theme.colors.gray700};
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: ${({ theme }) => theme.colors.blue200};
+		background-color: ${({ theme }) => theme.colors.blue200 + "10"};
+	}
+`;
+
+const ChannelTypeIcon = styled.span`
+	font-size: 18px;
+	margin-right: 8px;
+	color: ${({ theme }) => theme.colors.gray100};
+`;
+
+const ChannelTypeText = styled.span`
+	color: ${({ theme }) => theme.colors.gray100};
+	font-size: 14px;
+	font-weight: 500;
 `;
 
 export default CreateChannelDialog;

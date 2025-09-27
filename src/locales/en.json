@@ -25,6 +25,9 @@
             "serverName": "Server Name",
             "categoryName": "Category Name",
             "channelName": "Channel Name",
+            "channelType": "Channel Type",
+            "textChannel": "Text Channel",
+            "voiceChannel": "Voice Channel",
             "noServerSelected": "No Server Selected",
             "noChannelSelected": "No Channel Selected"
 		}
