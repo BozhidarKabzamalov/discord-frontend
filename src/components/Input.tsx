@@ -66,7 +66,7 @@ const StyledInput = styled.input`
 	font-size: 16px;
 	height: 40px;
 	padding: 10px;
-	color: #dcddde;
+	color: ${({ theme }) => theme.colors.textColor};
 	background-color: rgba(0, 0, 0, 0.1);
 	border: 1px solid rgba(0, 0, 0, 0.3);
 	border-radius: 3px;

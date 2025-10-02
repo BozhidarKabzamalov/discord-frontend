@@ -17,6 +17,16 @@ const ServerMembers = ({ server }: MemberProps) => {
 	const { mutate: deleteCategory } = useDeleteCategory();
 	const { mutate: deleteServer } = useDeleteServer();
 	const { mutate: leaveServer } = useLeaveServer();
+	const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
+	const authenticatedUserMembership = server.members.find((member) => {
+		return member.id === authenticatedUser!.id;
+	});
+
+	const isAuthenticatedUserOwner = authenticatedUserMembership?.roleId === 1;
+	const isAuthenticatedUserAdmin = authenticatedUserMembership?.roleId === 2;
+
+	const isAuthenticatedUserOwnerOrAdmin =
+		isAuthenticatedUserOwner || isAuthenticatedUserAdmin;
 	const setShowCreateChannelDialog = useBoundStore(
 		(state) => state.setShowCreateChannelDialog
 	);
@@ -29,8 +39,8 @@ const ServerMembers = ({ server }: MemberProps) => {
 	const setShowEditServerDialog = useBoundStore(
 		(state) => state.setShowEditServerDialog
 	);
-    const setServerId = useBoundStore((state) => state.setServerId);
-    const setShowEditCategoryDialog = useBoundStore(
+	const setServerId = useBoundStore((state) => state.setServerId);
+	const setShowEditCategoryDialog = useBoundStore(
 		(state) => state.setShowEditCategoryDialog
 	);
 
@@ -53,32 +63,34 @@ const ServerMembers = ({ server }: MemberProps) => {
 					<ChannelTypeTitle key={`title-${category.name}`}>
 						{category.name}
 					</ChannelTypeTitle>
-					<Actions>
-						<CreateAction
-							onClick={() => {
-								setShowCreateChannelDialog(true);
-								setChannelCategoryId(category.id);
-							}}
-						>
-							<FaPlus />
-						</CreateAction>
-						<UpdateAction
-							onClick={() => {
-                                setShowEditCategoryDialog(true)
-                                setChannelCategoryId(category.id);
-                            }}
-						>
-							<FaPen />
-						</UpdateAction>
-						<DeleteAction
-							onClick={() => onDeleteCategory(category.id)}
-						>
-							<FaTrash />
-						</DeleteAction>
-					</Actions>
+					{isAuthenticatedUserOwnerOrAdmin && (
+						<Actions>
+							<CreateAction
+								onClick={() => {
+									setShowCreateChannelDialog(true);
+									setChannelCategoryId(category.id);
+								}}
+							>
+								<FaPlus />
+							</CreateAction>
+							<UpdateAction
+								onClick={() => {
+									setShowEditCategoryDialog(true);
+									setChannelCategoryId(category.id);
+								}}
+							>
+								<FaPen />
+							</UpdateAction>
+							<DeleteAction
+								onClick={() => onDeleteCategory(category.id)}
+							>
+								<FaTrash />
+							</DeleteAction>
+						</Actions>
+					)}
 				</ChannelTypeTitleContainer>
 				{category.channels.map((channel) => (
-					<Channel key={channel.id} channel={channel} />
+					<Channel key={channel.id} server={server} channel={channel} />
 				))}
 			</ServerChannelsContainer>
 		);
@@ -88,7 +100,7 @@ const ServerMembers = ({ server }: MemberProps) => {
 		<Container>
 			<ServerNameContainer>
 				<ServerName>{server.name}</ServerName>
-				<Actions>
+				{isAuthenticatedUserOwnerOrAdmin && <Actions>
 					<ExitAction onClick={onLeaveServer}>
 						<FaSignOutAlt />
 					</ExitAction>
@@ -100,7 +112,7 @@ const ServerMembers = ({ server }: MemberProps) => {
 					<UpdateAction
 						onClick={() => {
 							setShowEditServerDialog(true);
-                            setServerId(server.id);
+							setServerId(server.id);
 						}}
 					>
 						<FaPen />
@@ -108,7 +120,7 @@ const ServerMembers = ({ server }: MemberProps) => {
 					<DeleteAction onClick={onDeleteServer}>
 						<FaTrash />
 					</DeleteAction>
-				</Actions>
+				</Actions>}
 			</ServerNameContainer>
 			{serverCategoriesJsx}
 			<CreateCategoryDialog />

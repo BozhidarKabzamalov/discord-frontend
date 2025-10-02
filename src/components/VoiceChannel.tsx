@@ -292,10 +292,8 @@ const ParticipantTile = styled.div<{
 	flex-direction: column;
 	align-items: center;
 	padding: ${({ $hasVideo }) => ($hasVideo ? "0" : "20px")};
-	background-color: ${({ theme, $isCurrentUser, $hasVideo }) => {
-		if ($hasVideo) return "transparent";
-		return $isCurrentUser ? theme.colors.blue200 : theme.colors.gray600;
-	}};
+	background-color: ${({ theme, $isCurrentUser, $hasVideo }) =>
+		theme.colors.videoBackground};
 	border-radius: 12px;
 	border: ${({ theme, $isCurrentUser }) =>
 		$isCurrentUser
@@ -305,13 +303,6 @@ const ParticipantTile = styled.div<{
 	overflow: hidden;
 	position: relative;
 	min-height: ${({ $hasVideo }) => ($hasVideo ? "200px" : "auto")};
-
-	&:hover {
-		background-color: ${({ theme, $isCurrentUser, $hasVideo }) => {
-			if ($hasVideo) return "transparent";
-			return $isCurrentUser ? theme.colors.blue300 : theme.colors.gray500;
-		}};
-	}
 `;
 
 const ParticipantAvatar = styled.div<{ $color: string }>`

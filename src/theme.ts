@@ -71,6 +71,8 @@ export const lightTheme = {
 
 		orange: "#faa61a",
 		purple: "#9c84ef",
+
+		videoBackground: "#c5c7db",
 	},
 };
 

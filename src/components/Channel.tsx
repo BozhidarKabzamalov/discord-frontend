@@ -2,6 +2,7 @@ import styled from "styled-components";
 import {
 	ChannelType as ChannelTypeEnum,
 	Channel as ChannelType,
+	Server,
 } from "../types/servers";
 import { FaHashtag, FaPen, FaTrash, FaVolumeDown } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
@@ -9,14 +10,25 @@ import { useDeleteChannel } from "../services/channelService";
 import { useBoundStore } from "../stores/useBoundStore";
 
 type ChannelProps = {
+	server: Server;
 	channel: ChannelType;
 };
 
-const Channel = ({ channel }: ChannelProps) => {
+const Channel = ({ channel, server }: ChannelProps) => {
 	const navigate = useNavigate();
 	const { serverId, channelId } = useParams();
 	const { id, name, type } = channel;
 	const isTextType = type === ChannelTypeEnum.TEXT;
+	const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
+	const authenticatedUserMembership = server.members.find((member) => {
+		return member.id === authenticatedUser!.id;
+	});
+
+	const isAuthenticatedUserOwner = authenticatedUserMembership?.roleId === 1;
+	const isAuthenticatedUserAdmin = authenticatedUserMembership?.roleId === 2;
+
+	const isAuthenticatedUserOwnerOrAdmin =
+		isAuthenticatedUserOwner || isAuthenticatedUserAdmin;
 	const { mutate: deleteChannel } = useDeleteChannel({
 		onSuccess: () => {
 			if (channel.id === parseInt(channelId!))
@@ -29,7 +41,9 @@ const Channel = ({ channel }: ChannelProps) => {
 	const setChannelId = useBoundStore((state) => state.setChannelId);
 
 	const handleChannelClick = () => {
-        const url = `/channels/${serverId}/${isTextType ? 'text' : 'voice'}/${id}`;
+		const url = `/channels/${serverId}/${
+			isTextType ? "text" : "voice"
+		}/${id}`;
 
 		navigate(url);
 	};
@@ -44,19 +58,21 @@ const Channel = ({ channel }: ChannelProps) => {
 		<Container onClick={handleChannelClick}>
 			{isTextType ? <FaHashtag size='18' /> : <FaVolumeDown size='18' />}
 			<ChannelName>{name}</ChannelName>
-			<Actions>
-				<UpdateAction
-					onClick={() => {
-						setChannelId(id);
-						setShowEditChannelDialog(true);
-					}}
-				>
-					<FaPen />
-				</UpdateAction>
-				<DeleteAction onClick={handleOnDelete}>
-					<FaTrash />
-				</DeleteAction>
-			</Actions>
+			{isAuthenticatedUserOwnerOrAdmin && (
+				<Actions>
+					<UpdateAction
+						onClick={() => {
+							setChannelId(id);
+							setShowEditChannelDialog(true);
+						}}
+					>
+						<FaPen />
+					</UpdateAction>
+					<DeleteAction onClick={handleOnDelete}>
+						<FaTrash />
+					</DeleteAction>
+				</Actions>
+			)}
 		</Container>
 	);
 };

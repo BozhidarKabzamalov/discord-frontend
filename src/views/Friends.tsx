@@ -73,13 +73,11 @@ const Friends: React.FC = () => {
 	};
 
 	const handleRemoveFriend = async (friendId: number) => {
-		if (window.confirm("Are you sure you want to remove this friend?")) {
-			try {
-				await removeFriend.mutateAsync(friendId);
-			} catch (error) {
-				console.error("Failed to remove friend:", error);
-			}
-		}
+        try {
+            await removeFriend.mutateAsync(friendId);
+        } catch (error) {
+            console.error("Failed to remove friend:", error);
+        }
 	};
 
 	const handleStartConversation = (friendId: number) => {
@@ -101,15 +99,13 @@ const Friends: React.FC = () => {
 								</FriendAvatar>
 								<FriendInfo>
 									<FriendName>{friend.username}</FriendName>
-									<FriendStatus>
-										{friend.isOnline ? "Online" : "Offline"}
-									</FriendStatus>
 								</FriendInfo>
 								<FriendActions>
 									<ActionButton
 										onClick={() =>
 											handleStartConversation(friend.id)
 										}
+										$success
 										title='Message'
 									>
 										<FaComments />
