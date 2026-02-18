@@ -5,7 +5,7 @@ import createThemeSlice from "./themeSlice";
 import { StoreType } from "../types/store";
 
 export const useBoundStore = create<StoreType>()((...a) => ({
-	...createAuthSlice(...a),
+    ...createAuthSlice(...a),
     ...createDialogSlice(...a),
     ...createThemeSlice(...a),
 }));

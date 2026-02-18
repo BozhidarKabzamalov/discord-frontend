@@ -8,31 +8,31 @@ const useAuth = () => {
     const navigate = useNavigate();
     const authenticatedUser = useBoundStore((state) => state.authenticatedUser);
     const setAuthenticatedUser = useBoundStore(
-		(state) => state.setAuthenticatedUser
-	);
-    
+        (state) => state.setAuthenticatedUser,
+    );
+
     const register = () => {};
 
-	const login = async (payload: LoginPayload) => {
-		try {
-			const authenticatedUser = await loginUser(payload);
-			setAuthenticatedUser(authenticatedUser);
+    const login = async (payload: LoginPayload) => {
+        try {
+            const authenticatedUser = await loginUser(payload);
+            setAuthenticatedUser(authenticatedUser);
 
-			axiosInstance.defaults.headers.common.Authorization = `Bearer ${authenticatedUser.token}`;
-			localStorage.setItem(
-				"authenticatedUser",
-				JSON.stringify(authenticatedUser)
-			);
-		} catch (error) {
-			console.log(error);
+            axiosInstance.defaults.headers.common.Authorization = `Bearer ${authenticatedUser.token}`;
+            localStorage.setItem(
+                "authenticatedUser",
+                JSON.stringify(authenticatedUser),
+            );
+        } catch (error) {
+            console.log(error);
             throw error;
-		}
-	};
+        }
+    };
 
-	const logout = () => {
-		localStorage.removeItem("authenticatedUser");
+    const logout = () => {
+        localStorage.removeItem("authenticatedUser");
         setAuthenticatedUser(null);
-	};
+    };
 
     const initializeAuth = async () => {
         const persistedAuthenticatedUser =
@@ -41,7 +41,7 @@ const useAuth = () => {
         if (!persistedAuthenticatedUser || authenticatedUser) return;
 
         const parsedPersistedAuthenticatedUser = JSON.parse(
-            persistedAuthenticatedUser
+            persistedAuthenticatedUser,
         );
 
         setAuthenticatedUser(parsedPersistedAuthenticatedUser);
@@ -50,6 +50,6 @@ const useAuth = () => {
     };
 
     return { register, login, logout, initializeAuth };
-}
+};
 
 export default useAuth;

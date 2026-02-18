@@ -5,73 +5,62 @@ import Message from "./Message";
 import { useParams } from "react-router";
 import { useGetServers } from "../services/serverService";
 import { useSocket } from "../hooks/useSocket";
-import { useVoiceStore } from "../stores/voiceStore";
-import { useBoundStore } from "../stores/useBoundStore";
-import { useEffect } from "react";
 
 const TextChannel = () => {
-	const { serverId, channelId } = useParams();
-	const { data: servers } = useGetServers();
-	const user = useBoundStore((state) => state.authenticatedUser);
-	const { isConnected, leaveVoiceChannel } = useVoiceStore();
+    const { serverId, channelId } = useParams();
+    const { data: servers } = useGetServers();
 
-	const server = servers?.find((server) => server.id === parseInt(serverId));
+    const server = servers?.find((server) => server.id === parseInt(serverId));
 
-	const channel = server?.categories
-		.flatMap((category) => category.channels || [])
-		.find((channel) => channel.id === parseInt(channelId));
+    const channel = server?.categories
+        .flatMap((category) => category.channels || [])
+        .find((channel) => channel.id === parseInt(channelId));
 
-	const { data: channelMessages } = useGetChannelMessages(channelId);
-    
-	useSocket(channelId);
+    const { data: channelMessages } = useGetChannelMessages(channelId);
 
-	useEffect(() => {
-		if (isConnected && user) {
-			leaveVoiceChannel(user.id, user.username);
-		}
-	}, [channelId, isConnected, leaveVoiceChannel, user]);
+    useSocket(channelId);
 
-	const channelMessagesJsx = channelMessages?.map((channelMessage) => (
-		<Message key={channelMessage.id} message={channelMessage} />
-	));
+    const channelMessagesJsx = channelMessages?.map((channelMessage) => (
+        <Message key={channelMessage.id} message={channelMessage} />
+    ));
 
-	return (
-		<Container>
-			<ChannelName>{channel?.name}</ChannelName>
-			<ChannelMessagesAndInputContainer>
-				<ChannelMessagesContainer>
-					{channelMessagesJsx}
-				</ChannelMessagesContainer>
-				<ChannelMessageInput />
-			</ChannelMessagesAndInputContainer>
-		</Container>
-	);
+    return (
+        <Container>
+            <ChannelName>{channel?.name}</ChannelName>
+            <ChannelMessagesAndInputContainer>
+                <ChannelMessagesContainer>
+                    {channelMessagesJsx}
+                </ChannelMessagesContainer>
+                <ChannelMessageInput />
+            </ChannelMessagesAndInputContainer>
+        </Container>
+    );
 };
 
 const Container = styled.div`
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	background-color: ${({ theme }) => theme.colors.gray1100};
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background-color: ${({ theme }) => theme.colors.gray1100};
 `;
 
 const ChannelName = styled.p`
-	color: ${({ theme }) => theme.colors.gray100};
-	padding: 15px;
-	border-bottom: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
+    color: ${({ theme }) => theme.colors.gray100};
+    padding: 15px;
+    border-bottom: ${({ theme }) => `1px solid ${theme.colors.gray300}`};
 `;
 
 const ChannelMessagesAndInputContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 15px;
 `;
 
 const ChannelMessagesContainer = styled.div`
-	display: flex;
-	flex-direction: column-reverse;
-	flex: 1;
+    display: flex;
+    flex-direction: column-reverse;
+    flex: 1;
     margin-bottom: 10px;
 `;
 

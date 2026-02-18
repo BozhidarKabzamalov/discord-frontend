@@ -1,35 +1,34 @@
 {
-	"translation": {
-		"common": {
-			"continue": "Продължи",
-			"cancel": "Отмени"
-		},
-		"register": {
-			"createAnAccount": "Създай акаунт",
-			"alreadyHaveAnAccount": "Вече имате акаунт?"
-		},
-		"login": {
-			"needAnAccount": "Нуждаеш се от акаунт?",
-			"welcomeBack": "Добре дошъл отново!",
-			"invalidLogin": "Имейла или паролата е невалидна"
-		},
-		"dashboard": {
-			"createServer": "Създай Сървър",
-			"createCategory": "Създай Категория",
-			"createChannel": "Създай Канал",
-			"editServer": "Редактирай Сървър",
-			"editCategory": "Редактирай Категория",
-			"editChannel": "Редактирай Канал",
-			"joinServer": "Присъедини се към сървър",
-			"members": "Членове",
-			"serverName": "Име на сървър",
-			"categoryName": "Име на категория",
-			"channelName": "Име на канал",
-			"channelType": "Тип канал",
-			"textChannel": "Текстов канал",
-			"voiceChannel": "Гласов канал",
-			"noServerSelected": "Няма избран сървър",
-			"noChannelSelected": "Няма избран канал"
-		}
-	}
+    "translation": {
+        "common": {
+            "continue": "Продължи",
+            "cancel": "Отмени"
+        },
+        "register": {
+            "createAnAccount": "Създай акаунт",
+            "alreadyHaveAnAccount": "Вече имате акаунт?"
+        },
+        "login": {
+            "needAnAccount": "Нуждаеш се от акаунт?",
+            "welcomeBack": "Добре дошъл отново!",
+            "invalidLogin": "Имейла или паролата е невалидна"
+        },
+        "dashboard": {
+            "createServer": "Създай Сървър",
+            "createCategory": "Създай Категория",
+            "createChannel": "Създай Канал",
+            "editServer": "Редактирай Сървър",
+            "editCategory": "Редактирай Категория",
+            "editChannel": "Редактирай Канал",
+            "joinServer": "Присъедини се към сървър",
+            "members": "Членове",
+            "serverName": "Име на сървър",
+            "categoryName": "Име на категория",
+            "channelName": "Име на канал",
+            "channelType": "Тип канал",
+            "textChannel": "Текстов канал",
+            "noServerSelected": "Няма избран сървър",
+            "noChannelSelected": "Няма избран канал"
+        }
+    }
 }

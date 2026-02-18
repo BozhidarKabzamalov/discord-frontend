@@ -7,11 +7,11 @@ import queryClient from "./queryClient.js";
 import ThemeProvider from "./components/ThemeProvider.js";
 
 createRoot(document.getElementById("root")!).render(
-	<ThemeProvider>
-		<BrowserRouter>
-			<QueryClientProvider client={queryClient}>
-				<App />
-			</QueryClientProvider>
-		</BrowserRouter>
-	</ThemeProvider>
+    <ThemeProvider>
+        <BrowserRouter>
+            <QueryClientProvider client={queryClient}>
+                <App />
+            </QueryClientProvider>
+        </BrowserRouter>
+    </ThemeProvider>,
 );

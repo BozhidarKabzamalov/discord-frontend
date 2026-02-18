@@ -4,15 +4,15 @@ import en from "./locales/en.json";
 import bg from "./locales/bg.json";
 
 i18n.use(initReactI18next).init({
-	resources: {
-		en,
+    resources: {
+        en,
         bg,
-	},
-	lng: "en",
-	fallbackLng: "en",
-	interpolation: {
-		escapeValue: false,
-	},
+    },
+    lng: "en",
+    fallbackLng: "en",
+    interpolation: {
+        escapeValue: false,
+    },
 });
 
 export default i18n;

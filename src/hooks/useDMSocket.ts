@@ -5,64 +5,60 @@ import { DirectMessage } from "../services/directMessageService";
 import { useBoundStore } from "../stores/useBoundStore";
 
 export const useDMSocket = () => {
-	const queryClient = useQueryClient();
-	const currentUser = useBoundStore(state => state.authenticatedUser);
+    const queryClient = useQueryClient();
+    const currentUser = useBoundStore((state) => state.authenticatedUser);
 
-	useEffect(() => {
-		if (!currentUser) {
-			console.log("No current user, skipping DM socket setup");
-			return;
-		}
+    useEffect(() => {
+        if (!currentUser) {
+            return;
+        }
 
-		if (!socket.connected) {
-			socket.connect();
-			console.log("Connected to DM socket");
-		}
+        if (!socket.connected) {
+            socket.connect();
+        }
 
-		const handleNewDirectMessage = (data: { directMessage: DirectMessage }) => {
-			const message = data.directMessage;
-			console.log("Received new DM:", message);
-			
-			// Determine the other user ID for the conversation
-			const otherUserId = message.senderId === currentUser.id ? message.receiverId : message.senderId;
-			console.log("Updating conversation for user:", otherUserId);
-			
-			// Update the conversation query data
-			queryClient.setQueryData<{ messages: DirectMessage[] }>(
-				["directMessages", otherUserId],
-				(oldData) => {
-					console.log("Current conversation data:", oldData);
-					if (!oldData) {
-						return { messages: [message] };
-					}
-					// Check if message already exists to prevent duplicates
-					const messageExists = oldData.messages.some(m => m.id === message.id);
-					if (messageExists) {
-						console.log("Message already exists, skipping");
-						return oldData;
-					}
-					console.log("Adding new message to conversation");
-					return {
-						messages: [...oldData.messages, message]
-					};
-				}
-			);
+        const handleNewDirectMessage = (data: {
+            directMessage: DirectMessage;
+        }) => {
+            const message = data.directMessage;
 
-			// Update conversations list to show the latest message
-			queryClient.invalidateQueries({ queryKey: ["dmConversations"] });
-		};
+            const otherUserId =
+                message.senderId === currentUser.id
+                    ? message.receiverId
+                    : message.senderId;
 
-		// Join the user's DM room
-		console.log("Joining DM room for user:", currentUser.id);
-		socket.emit("join_dm", currentUser.id);
+            queryClient.setQueryData<{ messages: DirectMessage[] }>(
+                ["directMessages", otherUserId],
+                (oldData) => {
+                    if (!oldData) {
+                        return { messages: [message] };
+                    }
 
-		// Listen for new direct messages
-		socket.on("new_direct_message", handleNewDirectMessage);
+                    const messageExists = oldData.messages.some(
+                        (m) => m.id === message.id,
+                    );
 
-		return () => {
-			console.log("Leaving DM room for user:", currentUser.id);
-			socket.emit("leave_dm", currentUser.id);
-			socket.off("new_direct_message", handleNewDirectMessage);
-		};
-	}, [currentUser, queryClient]);
+                    if (messageExists) {
+                        console.log("Message already exists, skipping");
+                        return oldData;
+                    }
+
+                    return {
+                        messages: [...oldData.messages, message],
+                    };
+                },
+            );
+
+            queryClient.invalidateQueries({ queryKey: ["dmConversations"] });
+        };
+
+        socket.emit("join_dm", currentUser.id);
+
+        socket.on("new_direct_message", handleNewDirectMessage);
+
+        return () => {
+            socket.emit("leave_dm", currentUser.id);
+            socket.off("new_direct_message", handleNewDirectMessage);
+        };
+    }, [currentUser, queryClient]);
 };

@@ -1,9 +1,9 @@
 export type CreateMessagePayload = {
-	channelId: number;
-	content: string;
+    channelId: number;
+    content: string;
 };
 
 export type DeleteMessagePayload = {
-	channelId: number;
-	messageId: number;
+    channelId: number;
+    messageId: number;
 };

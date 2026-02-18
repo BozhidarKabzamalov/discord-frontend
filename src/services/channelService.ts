@@ -1,181 +1,181 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "../axiosInstance";
 import {
-	CreateChannelPayload,
-	DeleteChannelPayload,
-	UpdateChannelPayload,
+    CreateChannelPayload,
+    DeleteChannelPayload,
+    UpdateChannelPayload,
 } from "../types/channel";
 import { Server } from "../types/servers";
 
 export const createChannel = async (payload: CreateChannelPayload) => {
-	const { name, type, serverId, categoryId } = payload;
+    const { name, type, serverId, categoryId } = payload;
 
-	try {
-		return await axiosInstance.post(
-			`/servers/${serverId}/categories/${categoryId}/channels`,
-			{ name, type }
-		);
-	} catch (error) {
-		console.log(error);
-	}
+    try {
+        return await axiosInstance.post(
+            `/servers/${serverId}/categories/${categoryId}/channels`,
+            { name, type },
+        );
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 export const useCreateChannel = () => {
-	const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-	return useMutation({
-		mutationFn: createChannel,
-		onSuccess: (response, variables) => {
-			const { serverId, categoryId } = variables;
+    return useMutation({
+        mutationFn: createChannel,
+        onSuccess: (response, variables) => {
+            const { serverId, categoryId } = variables;
 
-			if (!response) return;
+            if (!response) return;
 
-			const newChannel = response.data.channel;
+            const newChannel = response.data.channel;
 
-			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
-				if (!oldServers) {
-					return [];
-				}
+            queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
+                if (!oldServers) {
+                    return [];
+                }
 
-				return oldServers.map((server) => {
-					if (server.id !== serverId) return server;
+                return oldServers.map((server) => {
+                    if (server.id !== serverId) return server;
 
-					const updatedCategories = server.categories.map(
-						(category) => {
-							if (category.id !== categoryId) {
-								return category;
-							}
+                    const updatedCategories = server.categories.map(
+                        (category) => {
+                            if (category.id !== categoryId) {
+                                return category;
+                            }
 
-							return {
-								...category,
-								channels: [...category.channels, newChannel],
-							};
-						}
-					);
+                            return {
+                                ...category,
+                                channels: [...category.channels, newChannel],
+                            };
+                        },
+                    );
 
-					return {
-						...server,
-						categories: updatedCategories,
-					};
-				});
-			});
-		},
-	});
+                    return {
+                        ...server,
+                        categories: updatedCategories,
+                    };
+                });
+            });
+        },
+    });
 };
 
 export const deleteChannel = async (payload: DeleteChannelPayload) => {
-	try {
-		const { serverId, channelId } = payload;
+    try {
+        const { serverId, channelId } = payload;
 
-		return await axiosInstance.delete(
-			`/servers/${serverId}/channels/${channelId}`
-		);
-	} catch (error) {
-		console.log(error);
-	}
+        return await axiosInstance.delete(
+            `/servers/${serverId}/channels/${channelId}`,
+        );
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 interface UseDeleteServerOptions {
-	onSuccess?: () => void;
+    onSuccess?: () => void;
 }
 
 export const useDeleteChannel = (options: UseDeleteServerOptions = {}) => {
-	const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-	return useMutation({
-		mutationFn: deleteChannel,
-		onSuccess: (_data, variables) => {
-			const { serverId, channelId } = variables;
+    return useMutation({
+        mutationFn: deleteChannel,
+        onSuccess: (_data, variables) => {
+            const { serverId, channelId } = variables;
 
-			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
-				if (!oldServers) {
-					return [];
-				}
+            queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
+                if (!oldServers) {
+                    return [];
+                }
 
-				return oldServers.map((server) => {
-					if (server.id !== serverId) {
-						return server;
-					}
+                return oldServers.map((server) => {
+                    if (server.id !== serverId) {
+                        return server;
+                    }
 
-					return {
-						...server,
-						categories: server.categories.map((category) => {
-							const channelExistsInCategory =
-								category.channels.some(
-									(channel) => channel.id === channelId
-								);
+                    return {
+                        ...server,
+                        categories: server.categories.map((category) => {
+                            const channelExistsInCategory =
+                                category.channels.some(
+                                    (channel) => channel.id === channelId,
+                                );
 
-							if (!channelExistsInCategory) {
-								return category;
-							}
+                            if (!channelExistsInCategory) {
+                                return category;
+                            }
 
-							return {
-								...category,
-								channels: category.channels.filter(
-									(channel) => channel.id !== channelId
-								),
-							};
-						}),
-					};
-				});
-			});
+                            return {
+                                ...category,
+                                channels: category.channels.filter(
+                                    (channel) => channel.id !== channelId,
+                                ),
+                            };
+                        }),
+                    };
+                });
+            });
 
-			if (options.onSuccess) {
-				options.onSuccess();
-			}
-		},
-	});
+            if (options.onSuccess) {
+                options.onSuccess();
+            }
+        },
+    });
 };
 
 export const updateChannel = async (payload: UpdateChannelPayload) => {
-	const { serverId, channelId, name } = payload;
+    const { serverId, channelId, name } = payload;
 
-	try {
-		return await axiosInstance.put(
-			`/servers/${serverId}/channels/${channelId}`,
-			{ name }
-		);
-	} catch (error) {
-		console.log(error);
-	}
+    try {
+        return await axiosInstance.put(
+            `/servers/${serverId}/channels/${channelId}`,
+            { name },
+        );
+    } catch (error) {
+        console.log(error);
+    }
 };
 
 export const useUpdateChannel = () => {
-	const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-	return useMutation({
-		mutationFn: updateChannel,
-		onSuccess: (_data, variables) => {
-			const { name, serverId, channelId } = variables;
+    return useMutation({
+        mutationFn: updateChannel,
+        onSuccess: (_data, variables) => {
+            const { name, serverId, channelId } = variables;
 
-			queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
-				if (!oldServers) {
-					return [];
-				}
+            queryClient.setQueryData<Server[]>(["servers"], (oldServers) => {
+                if (!oldServers) {
+                    return [];
+                }
 
-				return oldServers.map((server) => {
-					if (server.id !== serverId) {
-						return server;
-					}
+                return oldServers.map((server) => {
+                    if (server.id !== serverId) {
+                        return server;
+                    }
 
-					const updatedCategories = server.categories.map(
-						(category) => {
-							const updatedChannels = category.channels.map(
-								(channel) => {
-									if (channel.id !== channelId) {
-										return channel;
-									}
-									return { ...channel, name };
-								}
-							);
+                    const updatedCategories = server.categories.map(
+                        (category) => {
+                            const updatedChannels = category.channels.map(
+                                (channel) => {
+                                    if (channel.id !== channelId) {
+                                        return channel;
+                                    }
+                                    return { ...channel, name };
+                                },
+                            );
 
-							return { ...category, channels: updatedChannels };
-						}
-					);
+                            return { ...category, channels: updatedChannels };
+                        },
+                    );
 
-					return { ...server, categories: updatedCategories };
-				});
-			});
-		},
-	});
+                    return { ...server, categories: updatedCategories };
+                });
+            });
+        },
+    });
 };

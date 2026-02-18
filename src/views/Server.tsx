@@ -5,25 +5,25 @@ import ServerMembers from "../components/ServerMembers";
 import ServerChannels from "../components/ServerChannels";
 
 const Server = () => {
-	const { serverId } = useParams();
-	const { data: servers } = useGetServers();
-	const server = servers?.find((server) => server.id === parseInt(serverId));
+    const { serverId } = useParams();
+    const { data: servers } = useGetServers();
+    const server = servers?.find((server) => server.id === parseInt(serverId));
 
     if (!server) return;
 
-	return (
-		<Container>
-			<ServerChannels server={server} />
+    return (
+        <Container>
+            <ServerChannels server={server} />
             <Outlet />
-			<ServerMembers server={server} />
-		</Container>
-	);
+            <ServerMembers server={server} />
+        </Container>
+    );
 };
 
 const Container = styled.main`
-	display: flex;
-	flex-direction: row;
-	flex: 1;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
 `;
 
 export default Server;

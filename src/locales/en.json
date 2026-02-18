@@ -1,5 +1,5 @@
 {
-	"translation": {
+    "translation": {
         "common": {
             "continue": "Continue",
             "cancel": "Cancel"
@@ -9,27 +9,26 @@
             "alreadyHaveAnAccount": "Already have an account?"
         },
         "login": {
-			"needAnAccount": "Need an account?",
-			"welcomeBack": "Welcome Back!",
-			"invalidLogin": "Email or password is invalid"
-		},
+            "needAnAccount": "Need an account?",
+            "welcomeBack": "Welcome Back!",
+            "invalidLogin": "Email or password is invalid"
+        },
         "dashboard": {
-			"createServer": "Create Server",
-			"createCategory": "Create Category",
-			"createChannel": "Create Channel",
-			"editServer": "Edit Server",
-			"editCategory": "Edit Category",
-			"editChannel": "Edit Channel",
-			"joinServer": "Join Server",
-			"members": "Members",
+            "createServer": "Create Server",
+            "createCategory": "Create Category",
+            "createChannel": "Create Channel",
+            "editServer": "Edit Server",
+            "editCategory": "Edit Category",
+            "editChannel": "Edit Channel",
+            "joinServer": "Join Server",
+            "members": "Members",
             "serverName": "Server Name",
             "categoryName": "Category Name",
             "channelName": "Channel Name",
             "channelType": "Channel Type",
             "textChannel": "Text Channel",
-            "voiceChannel": "Voice Channel",
             "noServerSelected": "No Server Selected",
             "noChannelSelected": "No Channel Selected"
-		}
-	}
+        }
+    }
 }
